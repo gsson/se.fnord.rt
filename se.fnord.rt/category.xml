@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/se.fnord.rt_1.0.0.qualifier.jar" id="se.fnord.rt" version="1.0.0.qualifier">
+      <category name="Integration"/>
+   </feature>
+   <category-def name="Integration" label="Mylyn Integration"/>
+</site>
