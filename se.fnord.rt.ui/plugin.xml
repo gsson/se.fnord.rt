@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         id="se.fnord.rt.repository"
+         name="%extension.name"
+         point="org.eclipse.mylyn.tasks.ui.repositories">
+      <connectorCore
+            class="se.fnord.rt.core.RequestTrackerRepositoryConnector"
+            id="se.fnord.rt.core.repositoryConnector"
+            name="%connectorCore.name">
+      </connectorCore>
+      <connectorUi
+            class="se.fnord.rt.ui.RequestTrackerRepositoryConnectorUI"
+            id="se.fnord.rt.ui.connectorUI"
+            name="%connectorUi.name">
+      </connectorUi>
+   </extension>
+   <extension
+         point="org.eclipse.mylyn.tasks.ui.editors">
+      <pageFactory
+            class="se.fnord.rt.ui.editor.RequestTrackerEditorPageFactory"
+            id="se.fnord.rt.ui.editorPageFactory">
+      </pageFactory>
+   </extension>
+   <extension
+         point="org.eclipse.mylyn.tasks.core.templates">
+      <repository
+            addAutomatically="false"
+            label="Request Tracker"
+            repositoryKind="RequestTracker"
+            urlRepository="http://www.bestpractical.com/rt/">
+      </repository>
+   </extension>
+
+</plugin>
