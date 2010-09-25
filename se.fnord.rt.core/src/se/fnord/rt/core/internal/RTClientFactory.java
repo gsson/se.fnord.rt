@@ -32,7 +32,7 @@ public class RTClientFactory {
     
     private static String makeKey(TaskRepository repository) {
         try {
-            AuthenticationCredentials credentials = repository.getCredentials(AuthenticationType.HTTP);
+            AuthenticationCredentials credentials = repository.getCredentials(AuthenticationType.REPOSITORY);
             if (credentials == null)
                 return repository.getRepositoryUrl();
 
