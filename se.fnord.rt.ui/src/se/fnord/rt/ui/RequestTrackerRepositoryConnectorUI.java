@@ -13,7 +13,6 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-
 package se.fnord.rt.ui;
 
 import org.eclipse.jface.wizard.IWizard;
@@ -27,6 +26,7 @@ import org.eclipse.mylyn.tasks.ui.wizards.ITaskRepositoryPage;
 import org.eclipse.mylyn.tasks.ui.wizards.RepositoryQueryWizard;
 
 import se.fnord.rt.core.RequestTrackerRepositoryConnector;
+
 public class RequestTrackerRepositoryConnectorUI extends AbstractRepositoryConnectorUi {
 
     public RequestTrackerRepositoryConnectorUI() {

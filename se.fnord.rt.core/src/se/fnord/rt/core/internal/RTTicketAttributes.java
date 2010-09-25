@@ -13,7 +13,6 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-
 package se.fnord.rt.core.internal;
 
 import java.util.Date;
@@ -29,7 +28,6 @@ import se.fnord.rt.core.internal.attributes.IdParser;
 import se.fnord.rt.core.internal.attributes.IntegerParser;
 import se.fnord.rt.core.internal.attributes.RTAttributeParser;
 import se.fnord.rt.core.internal.attributes.StringPassthrough;
-
 
 public enum RTTicketAttributes {
     ID("id", TaskAttribute.TASK_KEY, TaskAttribute.TYPE_INTEGER, null, new IdParser()),

@@ -13,7 +13,6 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-
 package se.fnord.rt.ui.editor;
 
 import org.eclipse.mylyn.internal.tasks.ui.editors.TextAttributeEditor;

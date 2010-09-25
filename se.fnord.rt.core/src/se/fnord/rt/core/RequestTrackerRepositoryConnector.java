@@ -13,7 +13,6 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-
 package se.fnord.rt.core;
 
 import java.util.Date;
@@ -34,6 +33,7 @@ import org.eclipse.mylyn.tasks.core.data.TaskMapper;
 import org.eclipse.mylyn.tasks.core.sync.ISynchronizationSession;
 
 public class RequestTrackerRepositoryConnector extends AbstractRepositoryConnector {
+
     public static final String REPOSITORY_CONNECTOR_KIND = "RequestTracker";
     public static final String REPOSITORY_TYPE_LABEL = "Request Tracker";
     public static final String REPOSITORY_TYPE_SHORT_LABEL = "RT";

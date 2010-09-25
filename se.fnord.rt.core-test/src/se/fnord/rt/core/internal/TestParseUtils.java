@@ -9,8 +9,6 @@ import java.util.Map;
 
 import org.junit.Test;
 
-import se.fnord.rt.core.internal.ParseUtils;
-
 public class TestParseUtils {
 
     @Test
