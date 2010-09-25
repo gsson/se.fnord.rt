@@ -89,7 +89,7 @@ public class RTQueryPage extends AbstractRepositoryQueryPage {
     @Override
     public void applyTo(IRepositoryQuery query) {
         query.setAttribute(RequestTrackerTaskDataHandler.QUERY_ID, queryString);
-        query.setUrl(urls.getBrowseTicketSearch(queryString));
+        query.setUrl(urls.getBrowseTicketSearchUrl(queryString));
         query.setSummary(getQueryTitle());
     }
 

@@ -114,7 +114,7 @@ public class RTClient {
     }
 
     private List<RTTicket> getQueryInt(String query) throws HttpException, IOException, RTException {
-        final String url = urls.getAPITicketSearch(query);
+        final String url = urls.getAPITicketSearchUrl(query);
         
         final String result = get(url);
 
