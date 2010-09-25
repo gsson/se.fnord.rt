@@ -44,11 +44,6 @@ public class RequestTrackerTaskRepositoryPage extends AbstractRepositorySettings
         setNeedsAdvanced(false);
         setNeedsProxy(false);
         setNeedsEncoding(false);
-        /*
-        if (repository != null) {
-            setUrl(repository.getRepositoryUrl());
-        }
-        */
     }
 
     @Override
