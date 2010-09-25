@@ -123,7 +123,7 @@ public class RTClient {
         return RTObjectFactory.createPartialTickets(result);
     }
 
-    private void connect() throws HttpException, IOException {
+    private void connect() throws HttpException, IOException, RTException {
         PostMethod getMethod = new PostMethod(urls.getAuthUrl());
         getMethod.getParams().setCookiePolicy(CookiePolicy.RFC_2965);
 
@@ -132,7 +132,7 @@ public class RTClient {
 
         RTResponse response = execute(getMethod);
         if (response.getCode() != 200)
-            throw new RuntimeException(response.message);
+            throw new RTException(response.getCode(), response.getMessage());
     }
 
     private String get(String url) throws HttpException, IOException, RTException {
