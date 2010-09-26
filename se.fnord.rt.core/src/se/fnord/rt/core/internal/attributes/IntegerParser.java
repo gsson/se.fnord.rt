@@ -20,4 +20,9 @@ public final class IntegerParser implements RTAttributeParser<Integer> {
     public Integer parse(String value) {
         return Integer.parseInt(value);
     }
+
+    @Override
+    public String dump(Object value) {
+        return value.toString();
+    }
 }

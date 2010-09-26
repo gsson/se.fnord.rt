@@ -16,8 +16,18 @@
 package se.fnord.rt.core.internal.attributes;
 
 public final class IdParser implements RTAttributeParser<Integer> {
+    private final String type;
+    public IdParser(final String type) {
+        this.type = type;
+    }
+
     @Override
     public Integer parse(String value) {
         return Integer.parseInt(value.split("/")[1]);
+    }
+
+    @Override
+    public String dump(Object value) {
+        return type + "/" + value;
     }
 }

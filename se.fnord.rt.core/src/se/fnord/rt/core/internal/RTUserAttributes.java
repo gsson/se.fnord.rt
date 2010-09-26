@@ -26,7 +26,7 @@ import se.fnord.rt.core.internal.attributes.RTAttributeParser;
 import se.fnord.rt.core.internal.attributes.StringPassthrough;
 
 public enum RTUserAttributes {
-    ID("id", "rt.person.id", TaskAttribute.TYPE_INTEGER, null, new IdParser()),
+    ID("id", "rt.person.id", TaskAttribute.TYPE_INTEGER, null, new IdParser("user")),
 
     NAME("Name", "rt.person.username", TaskAttribute.TYPE_SHORT_TEXT, TaskAttribute.KIND_DEFAULT, new StringPassthrough()),
     REAL_NAME("RealName", TaskAttribute.PERSON_NAME, TaskAttribute.KIND_DEFAULT, TaskAttribute.KIND_DEFAULT, new StringPassthrough()),

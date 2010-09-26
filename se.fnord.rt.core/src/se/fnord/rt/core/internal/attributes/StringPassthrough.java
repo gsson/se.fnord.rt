@@ -20,4 +20,9 @@ public final class StringPassthrough implements RTAttributeParser<String> {
     public String parse(String value) {
         return value;
     }
+
+    @Override
+    public String dump(Object value) {
+        return (String) value;
+    }
 }

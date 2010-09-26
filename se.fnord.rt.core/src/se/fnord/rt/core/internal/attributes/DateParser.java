@@ -15,18 +15,24 @@
  */
 package se.fnord.rt.core.internal.attributes;
 
-import java.text.ParseException;
+import java.util.Arrays;
 import java.util.Date;
 
-import org.apache.commons.lang.time.DateUtils;
+import org.apache.commons.httpclient.util.DateParseException;
+import org.apache.commons.httpclient.util.DateUtil;
 
 public final class DateParser implements RTAttributeParser<Date> {
     @Override
     public Date parse(String value) {
         try {
-            return DateUtils.parseDate(value, new String[] { "yyyy-MM-dd HH:mm:ss" });
-        } catch (ParseException e) {
+            return DateUtil.parseDate(value, Arrays.asList("yyyy-MM-dd HH:mm:ss" ));
+        } catch (DateParseException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public String dump(Object value) {
+        return DateUtil.formatDate((Date) value, "yyyy-MM-dd HH:mm:ss");
     }
 }
