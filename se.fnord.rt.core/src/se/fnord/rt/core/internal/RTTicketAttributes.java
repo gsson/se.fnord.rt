@@ -57,8 +57,6 @@ public enum RTTicketAttributes {
     TIME_ESTIMATED("TimeEstimated", "rt.timeEstimated", TaskAttribute.TYPE_SHORT_TEXT, TaskAttribute.KIND_DEFAULT, new StringPassthrough()),
     TIME_WORKED("TimeWorked", "rt.timeWorked", TaskAttribute.TYPE_SHORT_TEXT, TaskAttribute.KIND_DEFAULT, new StringPassthrough()),
     TIME_LEFT("TimeLeft", "rt.timeLeft", TaskAttribute.TYPE_SHORT_TEXT, TaskAttribute.KIND_DEFAULT, new StringPassthrough()),
-
-    COMPONENT("CF.{Component}", TaskAttribute.COMPONENT, TaskAttribute.TYPE_SHORT_TEXT, TaskAttribute.KIND_DEFAULT, new StringPassthrough()),
     ;
 
     private final RTAttributeParser<?> parser;
