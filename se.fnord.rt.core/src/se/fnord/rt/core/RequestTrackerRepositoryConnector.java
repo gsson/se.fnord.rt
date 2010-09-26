@@ -15,6 +15,7 @@
  */
 package se.fnord.rt.core;
 
+import java.net.MalformedURLException;
 import java.util.Date;
 
 import org.eclipse.core.runtime.CoreException;
@@ -31,6 +32,8 @@ import org.eclipse.mylyn.tasks.core.data.TaskData;
 import org.eclipse.mylyn.tasks.core.data.TaskDataCollector;
 import org.eclipse.mylyn.tasks.core.data.TaskMapper;
 import org.eclipse.mylyn.tasks.core.sync.ISynchronizationSession;
+
+import se.fnord.rt.core.internal.URLFactory;
 
 public class RequestTrackerRepositoryConnector extends AbstractRepositoryConnector {
 
@@ -107,8 +110,11 @@ public class RequestTrackerRepositoryConnector extends AbstractRepositoryConnect
     public String getTaskUrl(String repositoryUrl, String id) {
         if (repositoryUrl == null || id == null)
             return null;
-
-          return repositoryUrl + "/REST/1.0/ticket/" + id;
+        try {
+            return URLFactory.create(repositoryUrl).getAPITicketUrl(id);
+        } catch (MalformedURLException e) {
+            throw new IllegalArgumentException(repositoryUrl);
+        }
     }
 
     @Override
