@@ -26,6 +26,7 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpState;
+import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.cookie.CookiePolicy;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
@@ -122,16 +123,22 @@ public class RTClient {
     }
 
     private void connect() throws HttpException, IOException, RTException {
-        PostMethod method = new PostMethod(urls.getAuthUrl());
+        post(urls.getAuthUrl(),
+            new NameValuePair("user", userName),
+            new NameValuePair("pass", password)
+        );
+    }
+
+    private String post(final String url, final NameValuePair... params) throws HttpException, IOException, RTException {
+        PostMethod method = new PostMethod(url);
         try {
             method.getParams().setCookiePolicy(CookiePolicy.RFC_2965);
+            method.addParameters(params);
 
-            method.setParameter("user", userName);
-            method.setParameter("pass", password);
-
-            RTResponse response = execute(method);
+            final RTResponse response = execute(method);
             if (response.getCode() != 200)
                 throw new RTException(response.getCode(), response.getMessage());
+            return execute(method).getBody();
         }
         finally {
             method.releaseConnection();
