@@ -122,24 +122,34 @@ public class RTClient {
     }
 
     private void connect() throws HttpException, IOException, RTException {
-        PostMethod getMethod = new PostMethod(urls.getAuthUrl());
-        getMethod.getParams().setCookiePolicy(CookiePolicy.RFC_2965);
+        PostMethod method = new PostMethod(urls.getAuthUrl());
+        try {
+            method.getParams().setCookiePolicy(CookiePolicy.RFC_2965);
 
-        getMethod.setParameter("user", userName);
-        getMethod.setParameter("pass", password);
+            method.setParameter("user", userName);
+            method.setParameter("pass", password);
 
-        RTResponse response = execute(getMethod);
-        if (response.getCode() != 200)
-            throw new RTException(response.getCode(), response.getMessage());
+            RTResponse response = execute(method);
+            if (response.getCode() != 200)
+                throw new RTException(response.getCode(), response.getMessage());
+        }
+        finally {
+            method.releaseConnection();
+        }
     }
 
     private String get(String url) throws HttpException, IOException, RTException {
-        GetMethod getMethod = new GetMethod(url);
-        getMethod.getParams().setCookiePolicy(CookiePolicy.RFC_2965);
-        final RTResponse response = execute(getMethod);
-        if (response.getCode() != 200)
-            throw new RTException(response.getCode(), response.getMessage());
-        return execute(getMethod).getBody();
+        GetMethod method = new GetMethod(url);
+        try {
+            method.getParams().setCookiePolicy(CookiePolicy.RFC_2965);
+            final RTResponse response = execute(method);
+            if (response.getCode() != 200)
+                throw new RTException(response.getCode(), response.getMessage());
+            return execute(method).getBody();
+        }
+        finally {
+            method.releaseConnection();
+        }
     }
 
     private RTResponse execute(HttpMethod method) throws HttpException, IOException {
