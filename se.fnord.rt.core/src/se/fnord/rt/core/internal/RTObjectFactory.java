@@ -18,13 +18,14 @@ package se.fnord.rt.core.internal;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 public final class RTObjectFactory {
     private RTObjectFactory() {
     }
-    
+
     public static RTUser createUser(final String data) {
         final Map<String, String> attributes = new HashMap<String, String>();
 
@@ -45,12 +46,18 @@ public final class RTObjectFactory {
         ParseUtils.parseAttributes(data, attributes);
         ParseUtils.filterNotSet(attributes);
 
-        EnumMap<RTTicketAttributes, Object> fields = new EnumMap<RTTicketAttributes, Object>(RTTicketAttributes.class);
-        for (RTTicketAttributes attr : RTTicketAttributes.values())
-            if (attributes.containsKey(attr.getName()))
-                fields.put(attr, attr.parse(attributes.get(attr.getName())));
+        final EnumMap<RTTicketAttributes, Object> fields = new EnumMap<RTTicketAttributes, Object>(RTTicketAttributes.class);
+        final Iterator<Map.Entry<String, String>> i = attributes.entrySet().iterator();
+        while (i.hasNext()) {
+            final Map.Entry<String, String> e = i.next();
+            final RTTicketAttributes attr = RTTicketAttributes.getByName(e.getKey());
+            if (attr != null) {
+                i.remove();
+                fields.put(attr, attr.parse(e.getValue()));
+            }
+        }
 
-        return new RTTicket(fields);
+        return new RTTicket(fields, attributes);
     }
 
     public static RTTicket createFullTicket(final String data, final String multiPartHistory) {
@@ -59,34 +66,40 @@ public final class RTObjectFactory {
         ParseUtils.parseAttributes(data, attributes);
         ParseUtils.filterNotSet(attributes);
 
-        EnumMap<RTTicketAttributes, Object> fields = new EnumMap<RTTicketAttributes, Object>(RTTicketAttributes.class);
-        for (RTTicketAttributes attr : RTTicketAttributes.values())
-            if (attributes.containsKey(attr.getName()))
-                fields.put(attr, attr.parse(attributes.get(attr.getName())));
+        final EnumMap<RTTicketAttributes, Object> fields = new EnumMap<RTTicketAttributes, Object>(RTTicketAttributes.class);
+        final Iterator<Map.Entry<String, String>> i = attributes.entrySet().iterator();
+        while (i.hasNext()) {
+            final Map.Entry<String, String> e = i.next();
+            final RTTicketAttributes attr = RTTicketAttributes.getByName(e.getKey());
+            if (attr != null) {
+                i.remove();
+                fields.put(attr, attr.parse(e.getValue()));
+            }
+        }
 
         List<RTHistory> history = createHistory(multiPartHistory);
-        
-        return new RTTicket(fields, history);
+
+        return new RTTicket(fields, attributes, history);
     }
-    
+
     public static List<RTTicket> createPartialTickets(final String multiPartTickets) {
         final String[] ticketParts = ParseUtils.splitMultiPart(multiPartTickets);
         final ArrayList<RTTicket> tickets = new ArrayList<RTTicket>(ticketParts.length);
         for (final String ticketPart : ticketParts) {
             tickets.add(createPartialTicket(ticketPart));
         }
-        return tickets; 
+        return tickets;
     }
-    
+
     private static List<RTHistory> createHistory(final String multiPartHistory) {
         final String[] historyParts = ParseUtils.splitMultiPart(multiPartHistory);
         final ArrayList<RTHistory> history = new ArrayList<RTHistory>(historyParts.length);
         for (String historyPart : historyParts) {
             history.add(createHistoryItem(historyPart));
         }
-        return history; 
+        return history;
     }
-    
+
     private static RTHistory createHistoryItem(final String data) {
         final Map<String, String> attributes = new HashMap<String, String>();
         ParseUtils.parseAttributes(data, attributes);
@@ -99,5 +112,5 @@ public final class RTObjectFactory {
 
         return new RTHistory(fields);
     }
-    
+
 }

@@ -17,28 +17,32 @@ package se.fnord.rt.core.internal;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class RTTicket {
     public final int taskId;
-    public final Map<RTTicketAttributes, Object> fields;
+    public final Map<RTTicketAttributes, Object> mappedFields;
+    public final Map<String, String> unmappedFields;
     public final List<RTHistory> comments;
     public final boolean partial;
 
-    public RTTicket(final Map<RTTicketAttributes, Object> fields) {
-        this.fields = new EnumMap<RTTicketAttributes, Object>(RTTicketAttributes.class);
-        this.fields.putAll(fields);
+    public RTTicket(final Map<RTTicketAttributes, Object> mappedFields, final Map<String, String> unmappedFields) {
+        this.unmappedFields = new HashMap<String, String>(unmappedFields);
+        this.mappedFields = new EnumMap<RTTicketAttributes, Object>(RTTicketAttributes.class);
+        this.mappedFields.putAll(mappedFields);
         this.comments = null;
-        this.taskId = (Integer) fields.get(RTTicketAttributes.ID);
+        this.taskId = (Integer) mappedFields.get(RTTicketAttributes.ID);
         this.partial = true;
     }
 
-    public RTTicket(final Map<RTTicketAttributes, Object> fields, List<RTHistory> comments) {
-        this.fields = new EnumMap<RTTicketAttributes, Object>(RTTicketAttributes.class);
-        this.fields.putAll(fields);
+    public RTTicket(final Map<RTTicketAttributes, Object> mappedFields, final Map<String, String> unmappedFields, List<RTHistory> comments) {
+        this.unmappedFields = new HashMap<String, String>(unmappedFields);
+        this.mappedFields = new EnumMap<RTTicketAttributes, Object>(RTTicketAttributes.class);
+        this.mappedFields.putAll(mappedFields);
         this.comments = new ArrayList<RTHistory>(comments);
-        this.taskId = (Integer) fields.get(RTTicketAttributes.ID);
+        this.taskId = (Integer) mappedFields.get(RTTicketAttributes.ID);
         this.partial = false;
     }
 }
