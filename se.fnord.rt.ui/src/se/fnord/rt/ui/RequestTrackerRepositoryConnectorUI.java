@@ -16,6 +16,7 @@
 package se.fnord.rt.ui;
 
 import org.eclipse.jface.wizard.IWizard;
+import org.eclipse.mylyn.tasks.core.IRepositoryPerson;
 import org.eclipse.mylyn.tasks.core.IRepositoryQuery;
 import org.eclipse.mylyn.tasks.core.ITask;
 import org.eclipse.mylyn.tasks.core.ITaskComment;
@@ -68,7 +69,14 @@ public class RequestTrackerRepositoryConnectorUI extends AbstractRepositoryConne
     
     @Override
     public String getReplyText(TaskRepository taskRepository, ITask task, ITaskComment taskComment, boolean includeTask) {
-        return taskComment.getAuthor().getName() + " wrote:";
+        final IRepositoryPerson author = taskComment.getAuthor();
+        if (author != null) {
+            if (author.getName() != null)
+                return author.getName() + " wrote";
+            if (author.getPersonId() != null)
+                return author.getPersonId() + " wrote";
+        }
+        return "Commenter wrote";
     }
     
 }
