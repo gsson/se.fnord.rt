@@ -29,8 +29,10 @@ import org.eclipse.mylyn.tasks.ui.wizards.AbstractRepositorySettingsPage;
 import org.eclipse.mylyn.tasks.ui.wizards.ITaskRepositoryPage;
 import org.eclipse.swt.widgets.Composite;
 
+import se.fnord.rt.core.RequestTrackerCorePlugin;
 import se.fnord.rt.core.RequestTrackerRepositoryConnector;
 import se.fnord.rt.core.internal.RTClient;
+import se.fnord.rt.core.internal.RTClientFactory;
 import se.fnord.rt.core.internal.RTException;
 
 @SuppressWarnings("restriction")
@@ -75,7 +77,7 @@ public class RequestTrackerTaskRepositoryPage extends AbstractRepositorySettings
         setErrorMessage(null);
         return true;
     }
-    
+
     @Override
     protected void createAdditionalControls(Composite parent) {
     }
@@ -91,7 +93,7 @@ public class RequestTrackerTaskRepositoryPage extends AbstractRepositorySettings
             @Override
             public void run(IProgressMonitor monitor) throws CoreException {
                 try {
-                    RTClient rtClient = new RTClient(repository);
+                    RTClient rtClient = RequestTrackerCorePlugin.getDefault().getClient(repository);
                     rtClient.getUser(repository.getUserName());
                 } catch (RTException e) {
                     if (e.getCode() == 401)

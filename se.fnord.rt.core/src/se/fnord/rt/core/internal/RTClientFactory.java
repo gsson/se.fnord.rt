@@ -26,9 +26,9 @@ import org.eclipse.mylyn.commons.net.AuthenticationType;
 import org.eclipse.mylyn.tasks.core.TaskRepository;
 
 public class RTClientFactory {
-    
+
     private final Map<String, RTClient> clients = new HashMap<String, RTClient>();
-    
+
     private static String makeKey(TaskRepository repository) {
         try {
             AuthenticationCredentials credentials = repository.getCredentials(AuthenticationType.REPOSITORY);
@@ -41,12 +41,12 @@ public class RTClientFactory {
             throw new RuntimeException(e);
         }
     }
-    
+
     public synchronized RTClient getClient(TaskRepository repository) {
         String key = makeKey(repository);
         RTClient client = clients.get(key);
         if (client == null) {
-            client = new RTClient(repository);
+            client = new RTClient(repository.getRepositoryUrl(), repository.getCredentials(AuthenticationType.REPOSITORY));
             clients.put(key, client);
         }
         return client;

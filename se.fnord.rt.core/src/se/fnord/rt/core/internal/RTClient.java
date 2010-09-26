@@ -46,15 +46,14 @@ public class RTClient {
     /* RT/3.8.2 401 Credentials required */
     private static final Pattern HEAD_PATTERN = Pattern.compile("RT/([0-9.]+) ([0-9]+) (.*)");
 
-    public RTClient(TaskRepository repository) {
+    public RTClient(final String repositoryUrl, final AuthenticationCredentials credentials) {
 
         try {
-            urls = URLFactory.create(repository.getRepositoryUrl());
+            urls = URLFactory.create(repositoryUrl);
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }
 
-        final AuthenticationCredentials credentials = repository.getCredentials(AuthenticationType.REPOSITORY);
         if (credentials == null) {
             anonymousLogin = true;
             userName = null;
