@@ -166,6 +166,7 @@ public class RTClient {
     private String post(final String url, final NameValuePair... params) throws HttpException, IOException, RTException {
         PostMethod method = new PostMethod(url);
         try {
+            method.getParams().setContentCharset("UTF-8");
             method.getParams().setCookiePolicy(CookiePolicy.RFC_2965);
             method.addParameters(params);
 
