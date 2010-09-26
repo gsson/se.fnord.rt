@@ -154,7 +154,7 @@ public class RTClient {
             final RTResponse response = execute(method);
             if (response.getCode() != 200)
                 throw new RTException(response.getCode(), response.getMessage());
-            return execute(method).getBody();
+            return response.getBody();
         }
         finally {
             method.releaseConnection();
@@ -168,7 +168,7 @@ public class RTClient {
             final RTResponse response = execute(method);
             if (response.getCode() != 200)
                 throw new RTException(response.getCode(), response.getMessage());
-            return execute(method).getBody();
+            return response.getBody();
         }
         finally {
             method.releaseConnection();
