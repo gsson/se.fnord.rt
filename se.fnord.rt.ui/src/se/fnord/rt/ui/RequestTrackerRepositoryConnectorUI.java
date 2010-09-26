@@ -66,9 +66,11 @@ public class RequestTrackerRepositoryConnectorUI extends AbstractRepositoryConne
     public String getTaskKindLabel(ITask task) {
         return "Issue";
     }
-    
+
     @Override
     public String getReplyText(TaskRepository taskRepository, ITask task, ITaskComment taskComment, boolean includeTask) {
+        if (taskComment == null)
+            return "";
         final IRepositoryPerson author = taskComment.getAuthor();
         if (author != null) {
             if (author.getName() != null)
@@ -78,5 +80,5 @@ public class RequestTrackerRepositoryConnectorUI extends AbstractRepositoryConne
         }
         return "Commenter wrote";
     }
-    
+
 }

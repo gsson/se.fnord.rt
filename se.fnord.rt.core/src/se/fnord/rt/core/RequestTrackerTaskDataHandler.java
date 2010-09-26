@@ -72,14 +72,21 @@ public class RequestTrackerTaskDataHandler extends AbstractTaskDataHandler {
 
             final TaskAttribute root = data.getRoot();
             final TaskAttributeMapper mapper = data.getAttributeMapper();
+            String comment = null;
+            final Map<String,String> stringAttributes = new HashMap<String, String>();
 
-            Map<String,String> stringAttributes = new HashMap<String, String>();
             for (final TaskAttribute oldAttribute : oldAttributes) {
                 final String attributeId = oldAttribute.getId();
+                final TaskAttribute attribute = root.getAttribute(attributeId);
+
                 if (attributeId.startsWith(TaskAttribute.PREFIX_COMMENT))
                     return null;
 
-                final TaskAttribute attribute = root.getAttribute(attributeId);
+                if (TaskAttribute.COMMENT_NEW.equals(attributeId)) {
+                    comment = attribute.getValue();
+                    continue;
+                }
+
                 if (attributeId.startsWith(RTTicketAttributes.RT_ATTRIBUTE_PREFIX)) {
                     stringAttributes.put(attributeId.substring(RTTicketAttributes.RT_ATTRIBUTE_PREFIX.length()), attribute.getValue());
                 }
@@ -94,7 +101,10 @@ public class RequestTrackerTaskDataHandler extends AbstractTaskDataHandler {
             final RTClient client = RequestTrackerCorePlugin.getDefault().getClient(repository);
 
             try {
-                client.updateTask(taskId, stringAttributes);
+                if (!stringAttributes.isEmpty())
+                    client.updateTask(taskId, stringAttributes);
+                if (comment != null)
+                    client.addComment(taskId, comment);
             } catch (HttpException e) {
                 return null;
             } catch (IOException e) {

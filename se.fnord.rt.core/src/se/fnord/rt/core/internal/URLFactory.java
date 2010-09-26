@@ -127,11 +127,15 @@ public final class URLFactory {
     public String getBrowseTicketUrl(final String ticketId) {
         return appendPath(BROWSE_PATH.append("Ticket").append("Display.html"), "id", ticketId).toString();
     }
-    
+
+    public String getAPITicketNewCommentUrl(String ticketId) {
+        return appendPath(API_PATH.append("ticket").append(ticketId).append("comment")).toString();
+    }
+
     public String getAPITicketSearchUrl(final String filter) {
         return appendPath(API_PATH.append("search").append("ticket"), "format", "l", "query", filter).toString();
     }
-    
+
     public String getBrowseTicketSearchUrl(final String filter) {
         return appendPath(BROWSE_PATH.append("Search").append("Results.html"), "Query", filter).toString();
     }

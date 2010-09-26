@@ -17,6 +17,7 @@ package se.fnord.rt.core.internal;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -99,7 +100,26 @@ public class RTClient {
 
     private void updateTaskInt(String id, final Map<String, String> changed) throws HttpException, IOException, RTException {
         String content = ParseUtils.generateAttributes(changed);
-        String post = post(urls.getAPITicketUpdateUrl(id), new NameValuePair("content", content));
+        post(urls.getAPITicketUpdateUrl(id), new NameValuePair("content", content));
+    }
+
+    public void addComment(String id, final String comment) throws HttpException, IOException, RTException {
+        try {
+            addCommentInt(id, comment);
+        } catch (RTException e) {
+            if (anonymousLogin || e.getCode() != 401)
+                throw e;
+            connect();
+            addCommentInt(id, comment);
+        }
+    }
+
+    public void addCommentInt(String id, final String comment) throws HttpException, IOException, RTException {
+        Map<String, String> attributes = new HashMap<String, String>();
+        attributes.put("Action", "comment");
+        attributes.put("Text", comment);
+        String content = ParseUtils.generateAttributes(attributes);
+        post(urls.getAPITicketNewCommentUrl(id), new NameValuePair("content", content));
     }
 
     public RTUser getUser(String id) throws HttpException, IOException, RTException {

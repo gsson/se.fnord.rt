@@ -62,6 +62,7 @@ public class TaskDataBuilder {
                     meta.setLabel("Description");
                 }
             }
+            createAttribute(root, TaskAttribute.COMMENT_NEW, TaskAttribute.TYPE_LONG_RICH_TEXT, "New Comment", "");
         }
         taskData.setPartial(task.partial);
         return taskData;
