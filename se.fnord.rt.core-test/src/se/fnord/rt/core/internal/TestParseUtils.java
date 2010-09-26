@@ -3,15 +3,9 @@ package se.fnord.rt.core.internal;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.io.IOException;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.httpclient.HttpException;
-import org.eclipse.mylyn.commons.net.AuthenticationCredentials;
-import org.eclipse.mylyn.commons.net.AuthenticationType;
-import org.eclipse.mylyn.tasks.core.TaskRepository;
 import org.junit.Test;
 
 public class TestParseUtils {

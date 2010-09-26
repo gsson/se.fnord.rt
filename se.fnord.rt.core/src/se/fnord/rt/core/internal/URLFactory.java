@@ -30,9 +30,9 @@ import org.eclipse.core.runtime.Path;
 public final class URLFactory {
     private static final Path API_PATH = new Path("/REST/1.0/");
     private static final Path BROWSE_PATH = new Path("/");
-    private final Path basePath; 
+    private final Path basePath;
     private final URL repositoryURL;
-    
+
     public static URLFactory create(final String repositoryURL) throws MalformedURLException {
         return new URLFactory(new URL(repositoryURL));
     }
@@ -68,7 +68,7 @@ public final class URLFactory {
 
         return map;
     }
-    
+
     private URL appendPath(final IPath path, final String...kvpairs) {
         return appendPath(path, makeMap(kvpairs));
     }
@@ -80,7 +80,7 @@ public final class URLFactory {
             throw new IllegalArgumentException(e);
         }
     }
-    
+
     private String encode(final String in) {
         try {
             return URLEncoder.encode(in, "UTF-8");
@@ -88,7 +88,7 @@ public final class URLFactory {
             throw new RuntimeException(e);
         }
     }
-    
+
     private String makeQuery(final Map<String, String> query) {
         final StringBuilder sb = new StringBuilder("?");
         final Iterator<Map.Entry<String, String>> i = query.entrySet().iterator();
@@ -107,19 +107,19 @@ public final class URLFactory {
         }
         return sb.toString();
     }
-    
+
     public String getAuthUrl() {
         return appendPath(API_PATH).toString();
     }
-    
+
     public String getAPITicketHistoryUrl(final String ticketId) {
         return appendPath(API_PATH.append("ticket").append(ticketId).append("history"), "format", "l").toString();
     }
-    
+
     public String getAPITicketUrl(final String ticketId) {
         return appendPath(API_PATH.append("ticket").append(ticketId)).toString();
     }
-    
+
     public String getAPITicketUpdateUrl(final String ticketId) {
         return appendPath(API_PATH.append("ticket").append(ticketId).append("edit")).toString();
     }
@@ -147,4 +147,5 @@ public final class URLFactory {
     public String getBrowseUserUrl(String id) {
         return appendPath(BROWSE_PATH.append("Prefs.html"), "id", id).toString();
     }
+
 }

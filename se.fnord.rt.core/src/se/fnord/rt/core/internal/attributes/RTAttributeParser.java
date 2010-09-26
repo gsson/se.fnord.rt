@@ -15,7 +15,6 @@
  */
 package se.fnord.rt.core.internal.attributes;
 
-import java.util.Date;
 
 public interface RTAttributeParser<T> {
     T parse(String value);

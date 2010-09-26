@@ -32,7 +32,6 @@ import org.eclipse.swt.widgets.Composite;
 import se.fnord.rt.core.RequestTrackerCorePlugin;
 import se.fnord.rt.core.RequestTrackerRepositoryConnector;
 import se.fnord.rt.core.internal.RTClient;
-import se.fnord.rt.core.internal.RTClientFactory;
 import se.fnord.rt.core.internal.RTException;
 
 @SuppressWarnings("restriction")

@@ -46,13 +46,13 @@ public class RTTaskEditorPage extends AbstractTaskEditorPage implements IFormPag
             return super.createEditor(type, taskAttribute);
         }
     }
-    
+
     public RTTaskEditorPage(TaskEditor editor) {
         super(editor, "rtTaskEditorPage", RequestTrackerRepositoryConnector.REPOSITORY_TYPE_LABEL, RequestTrackerRepositoryConnector.REPOSITORY_CONNECTOR_KIND);
         setNeedsPrivateSection(false);
         setNeedsSubmit(true);
     }
-    
+
     @Override
     public AttributeEditorFactory getAttributeEditorFactory() {
         if (super.getAttributeEditorFactory() != null && editorFactory == null)
@@ -60,5 +60,5 @@ public class RTTaskEditorPage extends AbstractTaskEditorPage implements IFormPag
 
         return editorFactory;
     }
-    
+
 }
