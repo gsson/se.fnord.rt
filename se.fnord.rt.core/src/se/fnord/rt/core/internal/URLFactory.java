@@ -120,6 +120,10 @@ public final class URLFactory {
         return appendPath(API_PATH.append("ticket").append(ticketId)).toString();
     }
     
+    public String getAPITicketUpdateUrl(final String ticketId) {
+        return appendPath(API_PATH.append("ticket").append(ticketId).append("edit")).toString();
+    }
+
     public String getBrowseTicketUrl(final String ticketId) {
         return appendPath(BROWSE_PATH.append("Ticket").append("Display.html"), "id", ticketId).toString();
     }
