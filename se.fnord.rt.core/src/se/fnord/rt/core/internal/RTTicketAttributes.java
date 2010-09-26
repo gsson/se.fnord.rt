@@ -59,6 +59,8 @@ public enum RTTicketAttributes {
     TIME_LEFT("TimeLeft", "rt.timeLeft", TaskAttribute.TYPE_SHORT_TEXT, TaskAttribute.KIND_DEFAULT, new StringPassthrough()),
     ;
 
+    public static final String RT_ATTRIBUTE_PREFIX = "rt.attribute.";
+
     private final RTAttributeParser<?> parser;
     private final String type;
     private final String id;
@@ -129,7 +131,7 @@ public enum RTTicketAttributes {
     }
 
     public static TaskAttribute createDefaultAttribute(TaskAttributeMapper mapper, TaskAttribute parent, String name, Object data) {
-        TaskAttribute attr = parent.createAttribute("rt.attribute."+name);
+        TaskAttribute attr = parent.createAttribute(RT_ATTRIBUTE_PREFIX + name);
 
         TaskAttributeMetaData metaData = attr.getMetaData();
         metaData.setType(TaskAttribute.TYPE_SHORT_TEXT);

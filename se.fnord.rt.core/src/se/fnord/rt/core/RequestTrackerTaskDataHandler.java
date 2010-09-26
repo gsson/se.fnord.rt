@@ -16,7 +16,9 @@
 package se.fnord.rt.core;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.httpclient.HttpException;
@@ -25,6 +27,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.mylyn.tasks.core.IRepositoryQuery;
 import org.eclipse.mylyn.tasks.core.ITaskMapping;
 import org.eclipse.mylyn.tasks.core.RepositoryResponse;
+import org.eclipse.mylyn.tasks.core.RepositoryResponse.ResponseKind;
 import org.eclipse.mylyn.tasks.core.TaskRepository;
 import org.eclipse.mylyn.tasks.core.data.AbstractTaskDataHandler;
 import org.eclipse.mylyn.tasks.core.data.TaskAttribute;
@@ -59,8 +62,52 @@ public class RequestTrackerTaskDataHandler extends AbstractTaskDataHandler {
     @Override
     public RepositoryResponse postTaskData(TaskRepository repository, TaskData data, Set<TaskAttribute> oldAttributes, IProgressMonitor monitor)
             throws CoreException {
-        // TODO: Implement read-write functionality.
-        return null;
+        try {
+            if (data.isNew())
+                return null;
+
+            final String taskId = data.getTaskId();
+
+            monitor.beginTask("Updating task #"+ data.getTaskId(), 1);
+
+            final TaskAttribute root = data.getRoot();
+            final TaskAttributeMapper mapper = data.getAttributeMapper();
+
+            Map<String,String> stringAttributes = new HashMap<String, String>();
+            for (final TaskAttribute oldAttribute : oldAttributes) {
+                final String attributeId = oldAttribute.getId();
+                if (attributeId.startsWith(TaskAttribute.PREFIX_COMMENT))
+                    return null;
+
+                final TaskAttribute attribute = root.getAttribute(attributeId);
+                if (attributeId.startsWith(RTTicketAttributes.RT_ATTRIBUTE_PREFIX)) {
+                    stringAttributes.put(attributeId.substring(RTTicketAttributes.RT_ATTRIBUTE_PREFIX.length()), attribute.getValue());
+                }
+                else {
+                    final RTTicketAttributes type = RTTicketAttributes.getById(attributeId);
+                    if (type == null)
+                        return null;
+                    stringAttributes.put(type.getName(), type.dump(type.createObject(mapper, attribute)));
+                }
+            }
+
+            final RTClient client = RequestTrackerCorePlugin.getDefault().getClient(repository);
+
+            try {
+                client.updateTask(taskId, stringAttributes);
+            } catch (HttpException e) {
+                return null;
+            } catch (IOException e) {
+                return null;
+            } catch (RTException e) {
+                return null;
+            }
+
+            return new RepositoryResponse(ResponseKind.TASK_UPDATED, taskId);
+        }
+        finally {
+            monitor.done();
+        }
     }
 
     public TaskData getTaskData(TaskRepository repository, String taskId, IProgressMonitor monitor) {
