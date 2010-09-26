@@ -30,12 +30,12 @@ import se.fnord.rt.core.internal.attributes.RTAttributeParser;
 import se.fnord.rt.core.internal.attributes.StringPassthrough;
 
 public enum RTTicketAttributes {
-    ID("id", TaskAttribute.TASK_KEY, TaskAttribute.TYPE_INTEGER, null, new IdParser()),
+    ID("id", TaskAttribute.TASK_KEY, TaskAttribute.TYPE_INTEGER, null, new IdParser("ticket")),
 
     QUEUE("Queue", "rt.queue", TaskAttribute.TYPE_SHORT_TEXT, TaskAttribute.KIND_DEFAULT, new StringPassthrough()),
     SUBJECT("Subject", TaskAttribute.SUMMARY, TaskAttribute.TYPE_SHORT_TEXT, null, new StringPassthrough()),
     STATUS("Status", TaskAttribute.STATUS, TaskAttribute.TYPE_SHORT_TEXT, null, new StringPassthrough()),
-    
+
     PRIORITY("Priority", TaskAttribute.PRIORITY, TaskAttribute.TYPE_INTEGER, TaskAttribute.KIND_DEFAULT, new IntegerParser()),
     INITIAL_PRIORITY("InitialPriority", "rt.initialPriority", TaskAttribute.TYPE_INTEGER, TaskAttribute.KIND_DEFAULT, new IntegerParser()),
     FINAL_PRIORITY("FinalPriority", "rt.finalPriority", TaskAttribute.TYPE_INTEGER, TaskAttribute.KIND_DEFAULT, new IntegerParser()),
@@ -60,19 +60,23 @@ public enum RTTicketAttributes {
 
     COMPONENT("CF.{Component}", TaskAttribute.COMPONENT, TaskAttribute.TYPE_SHORT_TEXT, TaskAttribute.KIND_DEFAULT, new StringPassthrough()),
     ;
-    
+
     private final RTAttributeParser<?> parser;
     private final String type;
     private final String id;
     private final String name;
     private final String kind;
-    
+
     private static final Map<String, RTTicketAttributes> nameToObject;
-    
+    private static final Map<String, RTTicketAttributes> idToObject;
+
     static {
         nameToObject = new HashMap<String, RTTicketAttributes>();
         for (RTTicketAttributes attribute : values())
             nameToObject.put(attribute.getName(), attribute);
+        idToObject = new HashMap<String, RTTicketAttributes>();
+        for (RTTicketAttributes attribute : values())
+            idToObject.put(attribute.getId(), attribute);
     }
 
     private RTTicketAttributes(String name, String id, String type, String kind, RTAttributeParser<?> parser) {
@@ -82,16 +86,29 @@ public enum RTTicketAttributes {
         this.kind = kind;
         this.parser = parser;
     }
-    
+
+    private String getId() {
+        return id;
+    }
+
     public static RTTicketAttributes getByName(String name) {
         return nameToObject.get(name);
     }
-    
+
+    public static RTTicketAttributes getById(String id) {
+        return idToObject.get(id);
+    }
+
     @SuppressWarnings("unchecked")
     public <T> T parse(String value) {
         return (T) parser.parse(value);
     }
-    
+
+    @SuppressWarnings("unchecked")
+    public <T> String dump(T value) {
+        return parser.dump(value);
+    }
+
     public TaskAttribute createAttribute(TaskAttributeMapper mapper, TaskAttribute parent, Object data) {
         TaskAttribute attr = parent.createAttribute(id);
         TaskAttributeMetaData metaData = attr.getMetaData();
@@ -109,12 +126,39 @@ public enum RTTicketAttributes {
             mapper.setValue(attr, (String) data);
         else if (TaskAttribute.TYPE_BOOLEAN.equals(type))
             mapper.setBooleanValue(attr, (Boolean) data);
-        
+
         return attr;
+    }
+
+    public static TaskAttribute createDefaultAttribute(TaskAttributeMapper mapper, TaskAttribute parent, String name, Object data) {
+        TaskAttribute attr = parent.createAttribute("rt.attribute."+name);
+
+        TaskAttributeMetaData metaData = attr.getMetaData();
+        metaData.setType(TaskAttribute.TYPE_SHORT_TEXT);
+        metaData.setLabel(name);
+        metaData.setKind(TaskAttribute.KIND_DEFAULT);
+
+        mapper.setValue(attr, (String) data);
+        return attr;
+    }
+
+    public Object createObject(TaskAttributeMapper mapper, TaskAttribute attribute) {
+
+        if (TaskAttribute.TYPE_INTEGER.equals(type))
+            return mapper.getIntegerValue(attribute);
+        else if (TaskAttribute.TYPE_DATETIME.equals(type))
+            return mapper.getDateValue(attribute);
+        else if (TaskAttribute.TYPE_SHORT_TEXT.equals(type) || TaskAttribute.TYPE_LONG_TEXT.equals(type) || TaskAttribute.TYPE_LONG_RICH_TEXT.equals(type) || TaskAttribute.TYPE_SHORT_RICH_TEXT.equals(type))
+            return mapper.getValue(attribute);
+        else if (TaskAttribute.TYPE_PERSON.equals(type))
+            return mapper.getRepositoryPerson(attribute).getPersonId();
+        else if (TaskAttribute.TYPE_BOOLEAN.equals(type))
+            mapper.getBooleanValue(attribute);
+        throw new IllegalArgumentException("Unhandled type");
     }
 
     public String getName() {
         return name;
     }
-    
+
 }
