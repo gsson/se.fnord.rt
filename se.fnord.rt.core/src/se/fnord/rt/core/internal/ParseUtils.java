@@ -20,13 +20,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
+
 public final class ParseUtils {
     private ParseUtils() {}
 
     static String[] splitMultiPart(final String data) {
         return data.split("\\n--\\n");
     }
-    
+
     static void parseMultiPart(String history, List<Map<String, String>> comments) {
         for (final String item : splitMultiPart(history)) {
             final Map<String, String> attributes = new HashMap<String, String>();
@@ -66,7 +68,7 @@ public final class ParseUtils {
         final String[] lines = attributeString.split("\n");
         final StringBuilder headerBuilder = new StringBuilder();
         String previousLine = null;
-    
+
         for (final String line : lines) {
             if (!line.isEmpty()) {
                 if (line.startsWith(" ") || line.startsWith("\t")) {
@@ -96,6 +98,32 @@ public final class ParseUtils {
             headerBuilder.setLength(0);
         }
     }
-    
-    
+
+    public static String alignValue(final int alignment, final String value) {
+        if (value == null)
+            return "";
+
+        final String trimmed = value.trim();
+        final String[] lines = trimmed.split("\\n");
+        if (lines.length == 1)
+            return lines[0];
+        final String separator = "\n" + StringUtils.repeat(" ", alignment);
+        return StringUtils.join(lines, separator);
+    }
+
+    public static StringBuilder formatAttribute(final StringBuilder builder, String key, String value) {
+        builder.append(key);
+        builder.append(": ");
+        builder.append(alignValue(key.length() + 2, value));
+        return builder;
+    }
+
+    public static String generateAttributes(Map<String, String> changed) {
+        final StringBuilder builder = new StringBuilder();
+        for (final Map.Entry<String, String> attribute : changed.entrySet()) {
+            formatAttribute(builder, attribute.getKey(), attribute.getValue());
+            builder.append('\n');
+        }
+        return builder.toString();
+    }
 }

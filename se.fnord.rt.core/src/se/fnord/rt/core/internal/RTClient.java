@@ -18,6 +18,7 @@ package se.fnord.rt.core.internal;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -85,6 +86,22 @@ public class RTClient {
         return rtTicket;
     }
 
+    public void updateTask(String id, final Map<String, String> changed) throws HttpException, IOException, RTException {
+        try {
+            updateTaskInt(id, changed);
+        } catch (RTException e) {
+            if (anonymousLogin || e.getCode() != 401)
+                throw e;
+            connect();
+            updateTaskInt(id, changed);
+        }
+    }
+
+    private void updateTaskInt(String id, final Map<String, String> changed) throws HttpException, IOException, RTException {
+        String content = ParseUtils.generateAttributes(changed);
+        String post = post(urls.getAPITicketUpdateUrl(id), new NameValuePair("content", content));
+    }
+
     public RTUser getUser(String id) throws HttpException, IOException, RTException {
         try {
             return getUserInt(id);
@@ -115,7 +132,7 @@ public class RTClient {
 
     private List<RTTicket> getQueryInt(String query) throws HttpException, IOException, RTException {
         final String url = urls.getAPITicketSearchUrl(query);
-        
+
         final String result = get(url);
 
         return RTObjectFactory.createPartialTickets(result);
