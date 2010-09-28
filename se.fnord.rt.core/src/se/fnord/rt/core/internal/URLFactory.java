@@ -148,4 +148,12 @@ public final class URLFactory {
         return appendPath(BROWSE_PATH.append("Prefs.html"), "id", id).toString();
     }
 
+    public String getAPITicketLinksUrl(String ticketId) {
+        return appendPath(API_PATH.append("ticket").append(ticketId).append("links")).toString();
+    }
+
+    public String getAPITicketLinksUpdateUrl(String ticketId) {
+        return appendPath(API_PATH.append("ticket").append(ticketId).append("links")).toString();
+    }
+
 }

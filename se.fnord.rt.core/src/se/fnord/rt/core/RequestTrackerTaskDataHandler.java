@@ -37,6 +37,7 @@ import org.eclipse.mylyn.tasks.core.data.TaskDataCollector;
 
 import se.fnord.rt.core.internal.RTClient;
 import se.fnord.rt.core.internal.RTException;
+import se.fnord.rt.core.internal.RTLinkType;
 import se.fnord.rt.core.internal.RTTicket;
 import se.fnord.rt.core.internal.RTTicketAttributes;
 import se.fnord.rt.core.internal.TaskDataBuilder;
@@ -74,6 +75,7 @@ public class RequestTrackerTaskDataHandler extends AbstractTaskDataHandler {
             final TaskAttributeMapper mapper = data.getAttributeMapper();
             String comment = null;
             final Map<String,String> stringAttributes = new HashMap<String, String>();
+            final HashMap<String, String> links = new HashMap<String, String>();
 
             for (final TaskAttribute oldAttribute : oldAttributes) {
                 final String attributeId = oldAttribute.getId();
@@ -90,6 +92,12 @@ public class RequestTrackerTaskDataHandler extends AbstractTaskDataHandler {
                 if (attributeId.startsWith(RTTicketAttributes.RT_ATTRIBUTE_PREFIX)) {
                     stringAttributes.put(attributeId.substring(RTTicketAttributes.RT_ATTRIBUTE_PREFIX.length()), attribute.getValue());
                 }
+                else if (attributeId.startsWith(RTLinkType.RT_LINK_PREFIX)) {
+                    final RTLinkType linkType = RTLinkType.getById(attributeId);
+                    if (linkType == null)
+                        return null;
+                    links.put(linkType.getName(), linkType.dump(linkType.createObject(mapper, attribute)));
+                }
                 else {
                     final RTTicketAttributes type = RTTicketAttributes.getById(attributeId);
                     if (type == null)
@@ -103,6 +111,8 @@ public class RequestTrackerTaskDataHandler extends AbstractTaskDataHandler {
             try {
                 if (!stringAttributes.isEmpty())
                     client.updateTask(taskId, stringAttributes);
+                if (!links.isEmpty())
+                    client.updateLinks(taskId, links);
                 if (comment != null)
                     client.addComment(taskId, comment);
             } catch (HttpException e) {

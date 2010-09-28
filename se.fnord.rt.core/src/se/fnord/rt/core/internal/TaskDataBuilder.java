@@ -2,6 +2,7 @@ package se.fnord.rt.core.internal;
 
 import java.net.MalformedURLException;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.mylyn.tasks.core.IRepositoryPerson;
@@ -43,6 +44,10 @@ public class TaskDataBuilder {
         }
 
         createAttribute(root, TaskAttribute.TASK_URL, null, null, urls.getBrowseTicketUrl(taskId));
+
+        for (Map.Entry<RTLinkType, List<Integer>> link : task.links.entrySet()) {
+            link.getKey().createAttribute(mapper, root, link.getValue());
+        }
 
         if (task.comments != null) {
             int i = 0;

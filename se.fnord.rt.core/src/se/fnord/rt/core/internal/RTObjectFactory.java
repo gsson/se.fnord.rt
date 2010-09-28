@@ -60,7 +60,7 @@ public final class RTObjectFactory {
         return new RTTicket(fields, attributes);
     }
 
-    public static RTTicket createFullTicket(final String data, final String multiPartHistory) {
+    public static RTTicket createFullTicket(final String data, final String multiPartHistory, final String linksData) {
         final Map<String, String> attributes = new HashMap<String, String>();
 
         ParseUtils.parseAttributes(data, attributes);
@@ -77,9 +77,24 @@ public final class RTObjectFactory {
             }
         }
 
-        List<RTHistory> history = createHistory(multiPartHistory);
+        final List<RTHistory> history = createHistory(multiPartHistory);
+        final Map<RTLinkType, List<Integer>> links = createLinks(linksData);
 
-        return new RTTicket(fields, attributes, history);
+        return new RTTicket(fields, attributes, history, links);
+    }
+
+    private static Map<RTLinkType, List<Integer>> createLinks(String linksData) {
+        final Map<String, String> attributes = new HashMap<String, String>();
+        ParseUtils.parseAttributes(linksData, attributes);
+        ParseUtils.filterNotSet(attributes);
+
+        final EnumMap<RTLinkType,List<Integer>> links = new EnumMap<RTLinkType, List<Integer>>(RTLinkType.class);
+        for (Map.Entry<String, String> attribute : attributes.entrySet()) {
+            final RTLinkType linkType = RTLinkType.getByName(attribute.getKey());
+            if (linkType != null)
+                links.put(linkType, linkType.parse(attribute.getValue()));
+        }
+        return links;
     }
 
     public static List<RTTicket> createPartialTickets(final String multiPartTickets) {

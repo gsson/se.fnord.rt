@@ -26,6 +26,7 @@ public class RTTicket {
     public final Map<RTTicketAttributes, Object> mappedFields;
     public final Map<String, String> unmappedFields;
     public final List<RTHistory> comments;
+    public final Map<RTLinkType, List<Integer>> links;
     public final boolean partial;
 
     public RTTicket(final Map<RTTicketAttributes, Object> mappedFields, final Map<String, String> unmappedFields) {
@@ -33,16 +34,19 @@ public class RTTicket {
         this.mappedFields = new EnumMap<RTTicketAttributes, Object>(RTTicketAttributes.class);
         this.mappedFields.putAll(mappedFields);
         this.comments = null;
+        this.links = null;
         this.taskId = (Integer) mappedFields.get(RTTicketAttributes.ID);
         this.partial = true;
     }
 
-    public RTTicket(final Map<RTTicketAttributes, Object> mappedFields, final Map<String, String> unmappedFields, List<RTHistory> comments) {
+    public RTTicket(final Map<RTTicketAttributes, Object> mappedFields, final Map<String, String> unmappedFields, List<RTHistory> comments, final Map<RTLinkType, List<Integer>> links) {
         this.unmappedFields = new HashMap<String, String>(unmappedFields);
         this.mappedFields = new EnumMap<RTTicketAttributes, Object>(RTTicketAttributes.class);
         this.mappedFields.putAll(mappedFields);
         this.comments = new ArrayList<RTHistory>(comments);
+        this.links = new EnumMap<RTLinkType, List<Integer>>(links);
         this.taskId = (Integer) mappedFields.get(RTTicketAttributes.ID);
         this.partial = false;
     }
+
 }

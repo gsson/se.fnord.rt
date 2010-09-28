@@ -81,7 +81,8 @@ public class RTClient {
     private RTTicket getTaskInt(String id) throws HttpException, IOException, RTException {
         final String result = get(urls.getAPITicketUrl(id));
         final String history = get(urls.getAPITicketHistoryUrl(id));
-        final RTTicket rtTicket = RTObjectFactory.createFullTicket(result, history);
+        final String links = get(urls.getAPITicketLinksUrl(id));
+        final RTTicket rtTicket = RTObjectFactory.createFullTicket(result, history, links);
 
         return rtTicket;
     }
@@ -100,6 +101,22 @@ public class RTClient {
     private void updateTaskInt(String id, final Map<String, String> changed) throws HttpException, IOException, RTException {
         String content = ParseUtils.generateAttributes(changed);
         post(urls.getAPITicketUpdateUrl(id), new NameValuePair("content", content));
+    }
+
+    public void updateLinks(final String taskId, final Map<String, String> links) throws HttpException, IOException, RTException {
+        try {
+            updateLinksInt(taskId, links);
+        } catch (RTException e) {
+            if (anonymousLogin || e.getCode() != 401)
+                throw e;
+            connect();
+            updateLinksInt(taskId, links);
+        }
+    }
+
+    private void updateLinksInt(String taskId, Map<String, String> links) throws HttpException, IOException, RTException {
+        String content = ParseUtils.generateAttributes(links);
+        post(urls.getAPITicketLinksUpdateUrl(taskId), new NameValuePair("content", content));
     }
 
     public void addComment(String id, final String comment) throws HttpException, IOException, RTException {
