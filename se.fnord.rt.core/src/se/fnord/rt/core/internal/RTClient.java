@@ -45,6 +45,7 @@ public class RTClient {
 
     /* RT/3.8.2 401 Credentials required */
     private static final Pattern HEAD_PATTERN = Pattern.compile("RT/([0-9.]+) ([0-9]+) (.*)");
+    private static final Pattern LINE_SPLITTER = Pattern.compile("\\n");
 
     public RTClient(final String repositoryUrl, final AuthenticationCredentials credentials) {
 
@@ -218,7 +219,7 @@ public class RTClient {
                 session = cookie;
         }
 
-        String[] split = body.split("\\n", 2);
+        String[] split = LINE_SPLITTER.split(body, 2);
         if (split.length > 0) {
             final String head = split[0];
             final Matcher matcher = HEAD_PATTERN.matcher(head);

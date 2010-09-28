@@ -19,14 +19,18 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 
 public final class ParseUtils {
+    private static final Pattern MULTIPART_SPLITTER = Pattern.compile("\\n--\\n");
+    private static final Pattern KEYVALUE_SPLITTER = Pattern.compile(":");
+    private static final Pattern LINE_SPLITTER = Pattern.compile("\\n");
     private ParseUtils() {}
 
     static String[] splitMultiPart(final String data) {
-        return data.split("\\n--\\n");
+        return MULTIPART_SPLITTER.split(data);
     }
 
     static void parseMultiPart(String history, List<Map<String, String>> comments) {
@@ -52,7 +56,7 @@ public final class ParseUtils {
     }
 
     static void putAttribute(final String attribute, final Map<String, String> attributes) {
-        String[] split = attribute.split(":", 2);
+        String[] split = KEYVALUE_SPLITTER.split(attribute, 2);
         if (split.length == 1) {
             final String v = split[0].trim();
             attributes.put(v, v);
@@ -65,7 +69,7 @@ public final class ParseUtils {
     }
 
     static void parseAttributes(final String attributeString, final Map<String, String> attributes) {
-        final String[] lines = attributeString.split("\n");
+        final String[] lines = LINE_SPLITTER.split(attributeString);
         final StringBuilder headerBuilder = new StringBuilder();
         String previousLine = null;
 
@@ -104,7 +108,7 @@ public final class ParseUtils {
             return "";
 
         final String trimmed = value.trim();
-        final String[] lines = trimmed.split("\\n");
+        final String[] lines = LINE_SPLITTER.split(trimmed);
         if (lines.length == 1)
             return lines[0];
         final String separator = "\n" + StringUtils.repeat(" ", alignment);
