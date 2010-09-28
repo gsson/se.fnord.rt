@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
@@ -129,5 +130,21 @@ public final class ParseUtils {
             builder.append('\n');
         }
         return builder.toString();
+    }
+
+    public static String generateListAttributes(final Map<String, List<String>> changed) {
+        final StringBuilder builder = new StringBuilder();
+        for (final Entry<String, List<String>> attribute : changed.entrySet()) {
+            formatListAttribute(builder, attribute.getKey(), attribute.getValue());
+            builder.append('\n');
+        }
+        return builder.toString();
+    }
+
+    private static StringBuilder formatListAttribute(final StringBuilder builder, final String key, final List<String> value) {
+        builder.append(key);
+        builder.append(": ");
+        builder.append(alignValue(key.length() + 2, StringUtils.join(value, ",")));
+        return builder;
     }
 }
