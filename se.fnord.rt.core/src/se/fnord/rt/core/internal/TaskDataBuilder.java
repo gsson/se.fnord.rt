@@ -1,6 +1,7 @@
 package se.fnord.rt.core.internal;
 
 import java.net.MalformedURLException;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +13,13 @@ import org.eclipse.mylyn.tasks.core.data.TaskAttributeMapper;
 import org.eclipse.mylyn.tasks.core.data.TaskAttributeMetaData;
 import org.eclipse.mylyn.tasks.core.data.TaskCommentMapper;
 import org.eclipse.mylyn.tasks.core.data.TaskData;
+
+import se.fnord.rt.client.RTHistory;
+import se.fnord.rt.client.RTHistoryAttributes;
+import se.fnord.rt.client.RTLinkType;
+import se.fnord.rt.client.RTTicket;
+import se.fnord.rt.client.RTTicketAttributes;
+import se.fnord.rt.client.URLFactory;
 
 public class TaskDataBuilder {
     private final URLFactory urls;
@@ -45,8 +53,10 @@ public class TaskDataBuilder {
 
         createAttribute(root, TaskAttribute.TASK_URL, null, null, urls.getBrowseTicketUrl(taskId));
 
-        for (Map.Entry<RTLinkType, List<Integer>> link : task.links.entrySet()) {
-            link.getKey().createAttribute(mapper, root, link.getValue());
+        if (task.links != null) {
+            for (Map.Entry<RTLinkType, List<Integer>> link : task.links.entrySet()) {
+                link.getKey().createAttribute(mapper, root, link.getValue()).getMetaData().setReadOnly(true);
+            }
         }
 
         if (task.comments != null) {
@@ -75,9 +85,9 @@ public class TaskDataBuilder {
     }
 
 
-    private static TaskAttribute createAttribute(TaskAttribute parent, String id, String type, String label, String value) {
+    private static TaskAttribute createAttribute(TaskAttribute parent, String id, String type, String label, String... values) {
         TaskAttribute attribute = parent.createAttribute(id);
-        attribute.setValue(value);
+        attribute.setValues(Arrays.asList(values));
         TaskAttributeMetaData meta = attribute.getMetaData();
         meta.setType(type);
         meta.setLabel(label);

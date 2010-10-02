@@ -25,8 +25,8 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.widgets.Composite;
 
+import se.fnord.rt.client.URLFactory;
 import se.fnord.rt.core.RequestTrackerTaskDataHandler;
-import se.fnord.rt.core.internal.URLFactory;
 
 public class RTQueryPage extends AbstractRepositoryQueryPage {
 
@@ -78,9 +78,9 @@ public class RTQueryPage extends AbstractRepositoryQueryPage {
 
     @Override
     public boolean isPageComplete() {
-        return !titleString.isEmpty() && !queryString.isEmpty(); 
+        return !titleString.isEmpty() && !queryString.isEmpty();
     }
-    
+
     @Override
     public String getQueryTitle() {
         return titleString;

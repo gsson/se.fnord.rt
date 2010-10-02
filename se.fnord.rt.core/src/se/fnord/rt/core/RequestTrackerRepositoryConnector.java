@@ -16,7 +16,10 @@
 package se.fnord.rt.core;
 
 import java.net.MalformedURLException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Map.Entry;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -33,10 +36,10 @@ import org.eclipse.mylyn.tasks.core.data.TaskDataCollector;
 import org.eclipse.mylyn.tasks.core.data.TaskMapper;
 import org.eclipse.mylyn.tasks.core.sync.ISynchronizationSession;
 
-import se.fnord.rt.core.internal.URLFactory;
+import se.fnord.rt.client.URLFactory;
 
 public class RequestTrackerRepositoryConnector extends AbstractRepositoryConnector {
-
+    public static final String REPOSITORY_PROPERTY_QUEUE_PREFIX = "rt.queue.";
     public static final String REPOSITORY_CONNECTOR_KIND = "RequestTracker";
     public static final String REPOSITORY_TYPE_LABEL = "Request Tracker";
     public static final String REPOSITORY_TYPE_SHORT_LABEL = "RT";
@@ -46,7 +49,7 @@ public class RequestTrackerRepositoryConnector extends AbstractRepositoryConnect
     public RequestTrackerRepositoryConnector() {
         this.taskDataHandler = new RequestTrackerTaskDataHandler();
     }
-    
+
     @Override
     public boolean canCreateNewTask(TaskRepository repo) {
         return true;
@@ -71,15 +74,15 @@ public class RequestTrackerRepositoryConnector extends AbstractRepositoryConnect
     public String getShortLabel() {
         return REPOSITORY_TYPE_SHORT_LABEL;
     }
-    
+
     @Override
     public String getRepositoryUrlFromTaskUrl(String url) {
         if (url == null)
-          return null;
+            return null;
 
         int index = url.lastIndexOf("/ticket/");
         if (index == -1)
-          return null;
+            return null;
 
         return url.substring(0, index);
     }
@@ -88,14 +91,14 @@ public class RequestTrackerRepositoryConnector extends AbstractRepositoryConnect
     public String getTaskIdFromTaskUrl(String url) {
         if (url == null)
             return null;
-        
+
         int index = url.lastIndexOf("/ticket/");
         if (index == -1)
             return null;
-        
+
         return url.substring(index + "/ticket/".length() + 1);
     }
-    
+
     @Override
     public TaskData getTaskData(TaskRepository repository, String taskId, IProgressMonitor monitor) throws CoreException {
         return taskDataHandler.getTaskData(repository, taskId, monitor);
@@ -105,7 +108,7 @@ public class RequestTrackerRepositoryConnector extends AbstractRepositoryConnect
     public AbstractTaskDataHandler getTaskDataHandler() {
         return taskDataHandler;
     }
-    
+
     @Override
     public String getTaskUrl(String repositoryUrl, String id) {
         if (repositoryUrl == null || id == null)
@@ -122,33 +125,42 @@ public class RequestTrackerRepositoryConnector extends AbstractRepositoryConnect
         if (task == null || task.getModificationDate() == null)
             return false;
 
-          final Date lastKnownDate = task.getModificationDate();
-          final Date newDate = taskData.getAttributeMapper().getDateValue(
-                  taskData.getRoot().getAttribute(TaskAttribute.DATE_MODIFICATION));
+        final Date lastKnownDate = task.getModificationDate();
+        final Date newDate = taskData.getAttributeMapper().getDateValue(
+                taskData.getRoot().getAttribute(TaskAttribute.DATE_MODIFICATION));
 
-          return (!lastKnownDate.equals(newDate));
+        return (!lastKnownDate.equals(newDate));
     }
 
     @Override
-    public IStatus performQuery(TaskRepository repository, IRepositoryQuery query, TaskDataCollector collector, ISynchronizationSession session,
-            IProgressMonitor monitor) {
+    public IStatus performQuery(TaskRepository repository, IRepositoryQuery query, TaskDataCollector collector,
+            ISynchronizationSession session, IProgressMonitor monitor) {
         // TODO Auto-generated method stub
         try {
             monitor.beginTask("", 1);
             taskDataHandler.performQuery(repository, query, collector, monitor);
-            return new RepositoryStatus(repository, 0, "se.fnord.rt.core", 0, "OK");
-          } finally {
+            return RepositoryStatus.OK_STATUS;
+        } catch (CoreException e) {
+            return e.getStatus();
+        } finally {
             monitor.done();
-          }
+        }
     }
 
     @Override
     public void updateRepositoryConfiguration(TaskRepository repository, IProgressMonitor monitor) throws CoreException {
         // TODO: Update when repository/client will hold state.
         try {
-          monitor.beginTask("", 1);
+            monitor.beginTask("", 1);
+            List<String> queues = new ArrayList<String>();
+            for (Entry<String, String> property : repository.getProperties().entrySet()) {
+                if (property.getKey().startsWith(REPOSITORY_PROPERTY_QUEUE_PREFIX)) {
+                    queues.add(property.getValue());
+                }
+            }
+
         } finally {
-          monitor.done();
+            monitor.done();
         }
     }
 
@@ -157,12 +169,10 @@ public class RequestTrackerRepositoryConnector extends AbstractRepositoryConnect
         TaskMapper mapper = getTaskMapping(taskData);
         mapper.applyTo(task);
     }
-    
+
     @Override
     public TaskMapper getTaskMapping(TaskData taskData) {
         return new TaskMapper(taskData);
     }
-    
-    
-    
+
 }

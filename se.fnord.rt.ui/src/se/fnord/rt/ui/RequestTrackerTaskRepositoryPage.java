@@ -23,16 +23,18 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.mylyn.commons.net.AuthenticationCredentials;
+import org.eclipse.mylyn.commons.net.AuthenticationType;
 import org.eclipse.mylyn.internal.tasks.core.IRepositoryConstants;
 import org.eclipse.mylyn.tasks.core.TaskRepository;
 import org.eclipse.mylyn.tasks.ui.wizards.AbstractRepositorySettingsPage;
 import org.eclipse.mylyn.tasks.ui.wizards.ITaskRepositoryPage;
 import org.eclipse.swt.widgets.Composite;
 
-import se.fnord.rt.core.RequestTrackerCorePlugin;
+import se.fnord.rt.client.RTAPI;
+import se.fnord.rt.client.RTAPIFactory;
+import se.fnord.rt.client.RTException;
 import se.fnord.rt.core.RequestTrackerRepositoryConnector;
-import se.fnord.rt.core.internal.RTClient;
-import se.fnord.rt.core.internal.RTException;
 
 @SuppressWarnings("restriction")
 public class RequestTrackerTaskRepositoryPage extends AbstractRepositorySettingsPage implements ITaskRepositoryPage {
@@ -55,6 +57,8 @@ public class RequestTrackerTaskRepositoryPage extends AbstractRepositorySettings
     @Override
     public void applyTo(TaskRepository repository) {
         super.applyTo(repository);
+        repository.setProperty(RequestTrackerRepositoryConnector.REPOSITORY_PROPERTY_QUEUE_PREFIX + "0", "PSMBugs");
+        repository.setProperty(RequestTrackerRepositoryConnector.REPOSITORY_PROPERTY_QUEUE_PREFIX + "1", "PSMFeatures");
         repository.setProperty(IRepositoryConstants.PROPERTY_CATEGORY, IRepositoryConstants.CATEGORY_BUGS);
     }
 
@@ -92,7 +96,8 @@ public class RequestTrackerTaskRepositoryPage extends AbstractRepositorySettings
             @Override
             public void run(IProgressMonitor monitor) throws CoreException {
                 try {
-                    RTClient rtClient = RequestTrackerCorePlugin.getDefault().getClient(repository);
+                    AuthenticationCredentials credentials = repository.getCredentials(AuthenticationType.REPOSITORY);
+                    RTAPI rtClient = new RTAPIFactory().getClient(repository.getRepositoryUrl(), credentials.getUserName(), credentials.getPassword());
                     rtClient.getUser(repository.getUserName());
                 } catch (RTException e) {
                     if (e.getCode() == 401)

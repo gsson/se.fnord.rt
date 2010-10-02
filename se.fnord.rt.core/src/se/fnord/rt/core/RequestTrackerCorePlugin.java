@@ -16,12 +16,14 @@
 package se.fnord.rt.core;
 
 import org.eclipse.core.runtime.Plugin;
+import org.eclipse.mylyn.commons.net.AuthenticationCredentials;
+import org.eclipse.mylyn.commons.net.AuthenticationType;
 import org.eclipse.mylyn.tasks.core.TaskRepository;
 import org.eclipse.mylyn.tasks.core.TaskRepositoryLocationFactory;
 import org.osgi.framework.BundleContext;
 
-import se.fnord.rt.core.internal.RTClient;
-import se.fnord.rt.core.internal.RTClientFactory;
+import se.fnord.rt.client.RTAPI;
+import se.fnord.rt.client.RTAPIFactory;
 
 public class RequestTrackerCorePlugin extends Plugin {
 
@@ -33,7 +35,7 @@ public class RequestTrackerCorePlugin extends Plugin {
 
     private TaskRepositoryLocationFactory taskRepositoryLocationFactory;
 
-    private RTClientFactory clientFactory = new RTClientFactory();
+    private RTAPIFactory clientFactory = new RTAPIFactory();
 
     @Override
     public void start(BundleContext context) throws Exception {
@@ -58,10 +60,11 @@ public class RequestTrackerCorePlugin extends Plugin {
         return connector;
     }
 
-    public RTClient getClient(TaskRepository repo) {
-        return clientFactory.getClient(repo);
+    public RTAPI getClient(TaskRepository repo) {
+        AuthenticationCredentials credentials = repo.getCredentials(AuthenticationType.REPOSITORY);
+        return clientFactory.getClient(repo.getRepositoryUrl(), credentials.getUserName(), credentials.getPassword());
     }
-    
+
     public void setTaskRepositoryLocationFactory(TaskRepositoryLocationFactory taskRepositoryLocationFactory) {
         this.taskRepositoryLocationFactory = taskRepositoryLocationFactory;
     }

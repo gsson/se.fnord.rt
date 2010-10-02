@@ -1,0 +1,108 @@
+# 8/8 (id/500028/total)
+
+id: 500028
+Ticket: 14
+TimeTaken: 0
+Type: Create
+Field: 
+OldValue: 
+NewValue: 
+Data: 
+Description: Ticket created by gsson
+Content: 
+Creator: gsson
+Created: 2010-09-16 12:16:39
+
+Attachments: 
+             328781: untitled (0b)
+
+
+--
+
+# 8/8 (id/500030/total)
+
+id: 500030
+Ticket: 14
+TimeTaken: 0
+Type: Set
+Field: Subject
+OldValue: Release preparation and upgrade of all nodes.
+NewValue: Upgrade of all nodes to new version.
+Data: 
+Description: Subject changed from 'Release preparation and upgrade of all nodes.' to 'Upgrade of all nodes to new version.' by gsson
+Content: This transaction appears to have no content
+Creator: gsson
+Created: 2010-09-16 12:17:45
+Attachments: 
+
+--
+
+# 8/8 (id/500040/total)
+
+id: 500040
+Ticket: 14
+TimeTaken: 0
+Type: Set
+Field: TimeEstimated
+OldValue: 0
+NewValue: 600
+Data: 
+Description: TimeEstimated changed from (no value) to '600' by gsson
+Content: This transaction appears to have no content
+Creator: gsson
+Created: 2010-09-16 12:20:36
+Attachments: 
+
+--
+
+# 8/8 (id/504494/total)
+
+id: 504494
+Ticket: 14
+TimeTaken: 0
+Type: CustomField
+Field: 50
+OldValue: 
+NewValue: 1039
+Data: 
+Description: Target drop 1039 added by nobody
+Content: This transaction appears to have no content
+Creator: nobody
+Created: 2010-09-22 12:08:16
+Attachments: 
+
+--
+
+# 8/8 (id/504543/total)
+
+id: 504543
+Ticket: 14
+TimeTaken: 0
+Type: Set
+Field: Priority
+OldValue: 0
+NewValue: 52
+Data: 
+Description: Priority changed from (no value) to '52' by nobody
+Content: This transaction appears to have no content
+Creator: nobody
+Created: 2010-09-22 12:45:24
+Attachments: 
+
+--
+
+# 8/8 (id/509415/total)
+
+id: 509415
+Ticket: 14
+TimeTaken: 0
+Type: Status
+Field: Status
+OldValue: new
+NewValue: resolved
+Data: 
+Description: Status changed from 'new' to 'resolved' by nobody
+Content: This transaction appears to have no content
+Creator: nobody
+Created: 2010-09-30 06:31:29
+Attachments: 

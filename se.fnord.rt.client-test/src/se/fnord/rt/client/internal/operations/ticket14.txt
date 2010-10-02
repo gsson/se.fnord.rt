@@ -1,0 +1,34 @@
+id: ticket/14
+Queue: Nonsoftware RnD work 
+Owner: Nobody
+Creator: gsson
+Subject: Upgrade of all nodes to new version.
+Status: resolved
+Priority: 52
+InitialPriority: 0
+FinalPriority: 0
+Requestors: gsson@localhost
+Cc:
+AdminCc:
+Created: 2010-09-16 14:16:39
+Starts: Not set
+Started: 2010-09-30 08:31:29
+Due: Not set
+Resolved: 2010-09-30 08:31:29
+Told: Not set
+LastUpdated: 2010-09-30 08:31:29
+TimeEstimated: 600 minutes
+TimeWorked: 0
+TimeLeft: 0
+CF.{Abstract}: 
+CF.{Target Release}: 
+CF.{Target drop}: 1039
+CF.{Importance-dev}: 
+CF.{Importance-gs}: 
+CF.{Importance-pm}: 
+CF.{Prio boost}: 
+CF.{Component}: TheSoftware
+CF.{Customer Name}: Initrode
+CF.{Partner Name}: Initech
+CF.{Region}: EMEA
+CF.{Waiting for}: 
