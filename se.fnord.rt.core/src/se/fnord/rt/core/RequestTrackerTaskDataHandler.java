@@ -21,14 +21,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.httpclient.HttpException;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.mylyn.tasks.core.IRepositoryQuery;
 import org.eclipse.mylyn.tasks.core.ITaskMapping;
 import org.eclipse.mylyn.tasks.core.RepositoryResponse;
-import org.eclipse.mylyn.tasks.core.RepositoryStatus;
 import org.eclipse.mylyn.tasks.core.RepositoryResponse.ResponseKind;
+import org.eclipse.mylyn.tasks.core.RepositoryStatus;
 import org.eclipse.mylyn.tasks.core.TaskRepository;
 import org.eclipse.mylyn.tasks.core.data.AbstractTaskDataHandler;
 import org.eclipse.mylyn.tasks.core.data.TaskAttribute;
@@ -38,10 +37,10 @@ import org.eclipse.mylyn.tasks.core.data.TaskDataCollector;
 
 import se.fnord.rt.client.RTAPI;
 import se.fnord.rt.client.RTAuthenticationException;
-import se.fnord.rt.client.RTException;
 import se.fnord.rt.client.RTLinkType;
 import se.fnord.rt.client.RTTicket;
 import se.fnord.rt.client.RTTicketAttributes;
+import se.fnord.rt.client.RTTicketCollector;
 import se.fnord.rt.core.internal.TaskDataBuilder;
 
 public class RequestTrackerTaskDataHandler extends AbstractTaskDataHandler {
@@ -51,18 +50,32 @@ public class RequestTrackerTaskDataHandler extends AbstractTaskDataHandler {
         super();
     }
 
+    private static final class TicketCollector implements RTTicketCollector {
+        private final TaskDataCollector collector;
+        private final TaskDataBuilder taskDataBuilder;
+        private final IProgressMonitor monitor;
+
+        public TicketCollector(final TaskDataBuilder taskDataBuilder, final TaskDataCollector collector, final IProgressMonitor monitor) {
+            this.taskDataBuilder = taskDataBuilder;
+            this.collector = collector;
+            this.monitor = monitor;
+        }
+        @Override
+        public void accept(RTTicket ticket) {
+            this.collector.accept(taskDataBuilder.createTaskData(ticket));
+            monitor.worked(1);
+        }
+    }
+
     @Override
     public void getMultiTaskData(TaskRepository repository, Set<String> taskIds, TaskDataCollector collector,
             IProgressMonitor monitor) throws CoreException {
-
+        monitor.beginTask("Fetching tickets", taskIds.size());
         try {
             final RTAPI client = RequestTrackerCorePlugin.getDefault().getClient(repository);
             final TaskDataBuilder taskDataBuilder = new TaskDataBuilder(repository, getAttributeMapper(repository));
 
-            final List<RTTicket> tasks = client.getTicketsFromIds(taskIds.toArray(new String[taskIds.size()]));
-
-            for (final RTTicket task : tasks)
-                collector.accept(taskDataBuilder.createTaskData(task));
+            client.getTicketsFromIds(new TicketCollector(taskDataBuilder, collector, monitor), taskIds.toArray(new String[taskIds.size()]));
 
         } catch (RTAuthenticationException e) {
             throw new CoreException(RepositoryStatus.createLoginError(repository.getRepositoryUrl(), RequestTrackerCorePlugin.PLUGIN_ID));

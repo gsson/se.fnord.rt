@@ -7,6 +7,7 @@ import org.apache.commons.httpclient.HttpException;
 
 import se.fnord.rt.client.RTException;
 import se.fnord.rt.client.RTTicket;
+import se.fnord.rt.client.RTTicketCollector;
 import se.fnord.rt.client.URLFactory;
 import se.fnord.rt.client.internal.RTObjectFactory;
 import se.fnord.rt.client.internal.RTOperation;

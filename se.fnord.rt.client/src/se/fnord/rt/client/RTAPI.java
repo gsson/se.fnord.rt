@@ -27,6 +27,10 @@ public class RTAPI {
         return executor.execute(new GetTicket(ticketId));
     }
 
+    public List<RTTicket> getTicketsFromIds(final RTTicketCollector collector, final String...ticketIds) throws RTException, HttpException, IOException, InterruptedException {
+        return executor.execute(new GetTicketsFromIds(collector, ticketIds));
+    }
+
     public List<RTTicket> getTicketsFromIds(final String...ticketIds) throws RTException, HttpException, IOException, InterruptedException {
         return executor.execute(new GetTicketsFromIds(ticketIds));
     }

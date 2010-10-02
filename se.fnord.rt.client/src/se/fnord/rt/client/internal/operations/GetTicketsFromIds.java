@@ -10,6 +10,7 @@ import org.apache.commons.httpclient.HttpException;
 import se.fnord.rt.client.RTAuthenticationException;
 import se.fnord.rt.client.RTException;
 import se.fnord.rt.client.RTTicket;
+import se.fnord.rt.client.RTTicketCollector;
 import se.fnord.rt.client.URLFactory;
 import se.fnord.rt.client.internal.RTObjectFactory;
 import se.fnord.rt.client.internal.RTOperation;
@@ -38,8 +39,15 @@ public class GetTicketsFromIds implements RTOperation<List<RTTicket>> {
     }
 
     private final String[] ticketIds;
+    private final RTTicketCollector collector;
 
     public GetTicketsFromIds(final String... ticketIds) {
+        this.ticketIds = ticketIds;
+        this.collector = null;
+    }
+
+    public GetTicketsFromIds(RTTicketCollector collector, final String... ticketIds) {
+        this.collector = collector;
         this.ticketIds = ticketIds;
     }
 
@@ -58,7 +66,10 @@ public class GetTicketsFromIds implements RTOperation<List<RTTicket>> {
         for (TicketInfoHolder holder : holders) {
             try {
                 final String[] result = holder.await();
-                tickets.add(RTObjectFactory.createFullTicket(result[0], result[1], result[2]));
+                final RTTicket ticket = RTObjectFactory.createFullTicket(result[0], result[1], result[2]);
+                if (collector != null)
+                    collector.accept(ticket);
+                tickets.add(ticket);
             }
             catch (RTAuthenticationException e) {
                 throw e;
