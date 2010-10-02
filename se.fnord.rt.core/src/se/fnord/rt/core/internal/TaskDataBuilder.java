@@ -75,6 +75,7 @@ public class TaskDataBuilder {
                     TaskAttributeMetaData meta = attribute.getMetaData();
                     meta.setType(TaskAttribute.TYPE_LONG_RICH_TEXT);
                     meta.setLabel("Description");
+                    meta.setReadOnly(true);
                 }
             }
             createAttribute(root, TaskAttribute.COMMENT_NEW, TaskAttribute.TYPE_LONG_RICH_TEXT, "New Comment", "");
