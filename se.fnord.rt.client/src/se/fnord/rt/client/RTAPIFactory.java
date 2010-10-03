@@ -35,20 +35,20 @@ public class RTAPIFactory {
 
     private final Map<String, RTClient> clients = new HashMap<String, RTClient>();
 
-    private static String makeKey(final String repositoryUrl, final String username, final String password) {
+    private static String makeKey(final String repositoryUrl, final String username) {
         try {
-            if (username == null || password == null)
+            if (username == null)
                 return repositoryUrl;
 
             URI uri = URI.create(repositoryUrl);
-            return uri.getScheme() + URIUtil.encodeWithinAuthority(username) + ":" + URIUtil.encodeWithinAuthority(password) + "@" + uri.getHost() + ":" + uri.getPort() + uri.getPath();
+            return uri.getScheme() + URIUtil.encodeWithinAuthority(username) + "@" + uri.getHost() + ":" + uri.getPort() + uri.getPath();
         } catch (URIException e) {
             throw new RuntimeException(e);
         }
     }
 
     public synchronized RTAPI getClient(final String repositoryUrl, final String username, final String password) {
-        final String key = makeKey(repositoryUrl, username, password);
+        final String key = makeKey(repositoryUrl, username);
         RTClient client = clients.get(key);
         if (client == null) {
             client = new RTClient(CONNECTION_MANAGER, EXECUTOR, repositoryUrl, username, password);
