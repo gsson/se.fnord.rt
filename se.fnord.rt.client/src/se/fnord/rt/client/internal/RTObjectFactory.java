@@ -33,6 +33,7 @@ import se.fnord.rt.client.RTTicket;
 import se.fnord.rt.client.RTTicketAttributes;
 import se.fnord.rt.client.RTUser;
 import se.fnord.rt.client.RTUserAttributes;
+import se.fnord.rt.client.internal.attributes.IdParser;
 
 public final class RTObjectFactory {
     private static final Pattern FIELD_PATTERN = Pattern.compile("^(.+) \\(([^)]+)?\\): (\\S+)(?: (.*))?$");
@@ -165,7 +166,8 @@ public final class RTObjectFactory {
         final Map<String, String> attributes = new HashMap<String, String>();
         ParseUtils.parseAttributes(queueInfo, attributes);
         ParseUtils.filterNotSet(attributes);
-        return new RTQueue(Integer.parseInt(attributes.get("id")), attributes.get("Name"), attributes.get("Description"), qf, tf);
+        IdParser idParser = new IdParser("queue");
+        return new RTQueue(idParser.parse(attributes.get("id")), attributes.get("Name"), attributes.get("Description"), qf, tf);
     }
 
 }
