@@ -7,4 +7,5 @@ Bundle-Vendor: Henrik Gustafsson
 Fragment-Host: se.fnord.rt.client;bundle-version="1.0.0.qualifier"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: org.junit4;bundle-version="4.8.1",
- org.easymock;bundle-version="2.4.0"
+ org.easymock;bundle-version="2.4.0",
+ org.apache.commons.logging;bundle-version="1.0.4"

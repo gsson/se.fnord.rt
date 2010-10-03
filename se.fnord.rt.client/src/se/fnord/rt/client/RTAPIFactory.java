@@ -37,11 +37,15 @@ public class RTAPIFactory {
 
     public static String createRepositoryKey(final String repositoryUrl, final String username) {
         try {
-            if (username == null)
-                return repositoryUrl;
-
             URI uri = URI.create(repositoryUrl);
-            return uri.getScheme() + URIUtil.encodeWithinAuthority(username) + "@" + uri.getHost() + ":" + uri.getPort() + uri.getPath();
+
+            final String schemePart = uri.getScheme() + "://";
+            final String userPart = (username != null)?URIUtil.encodeWithinAuthority(username) + "@":"";
+            final String hostPart = (uri.getHost() != null)?uri.getHost():"localhost";
+            final String portPart = (uri.getPort() != -1)?(":" + uri.getPort()):"";
+            final String pathPart = (uri.getPath() != null && !uri.getPath().isEmpty())?uri.getPath():"/";
+
+            return schemePart + userPart + hostPart + portPart + pathPart;
         } catch (URIException e) {
             throw new RuntimeException(e);
         }
