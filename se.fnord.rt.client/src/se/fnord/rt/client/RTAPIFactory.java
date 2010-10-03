@@ -35,7 +35,7 @@ public class RTAPIFactory {
 
     private final Map<String, RTClient> clients = new HashMap<String, RTClient>();
 
-    private static String makeKey(final String repositoryUrl, final String username) {
+    public static String createRepositoryKey(final String repositoryUrl, final String username) {
         try {
             if (username == null)
                 return repositoryUrl;
@@ -48,7 +48,7 @@ public class RTAPIFactory {
     }
 
     public synchronized RTAPI getClient(final String repositoryUrl, final String username, final String password) {
-        final String key = makeKey(repositoryUrl, username);
+        final String key = createRepositoryKey(repositoryUrl, username);
         RTClient client = clients.get(key);
         if (client == null) {
             client = new RTClient(CONNECTION_MANAGER, EXECUTOR, repositoryUrl, username, password);
