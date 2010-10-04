@@ -13,6 +13,7 @@ import se.fnord.rt.client.internal.operations.GetTicket;
 import se.fnord.rt.client.internal.operations.GetTicketsFromIds;
 import se.fnord.rt.client.internal.operations.GetTicketsFromQuery;
 import se.fnord.rt.client.internal.operations.GetUser;
+import se.fnord.rt.client.internal.operations.GetVersion;
 import se.fnord.rt.client.internal.operations.UpdateLinks;
 import se.fnord.rt.client.internal.operations.UpdateTicket;
 
@@ -57,5 +58,9 @@ public class RTAPI {
 
     public void updateLinks(final String ticketId, final Map<String, String> links) throws RTException, HttpException, IOException, InterruptedException {
         executor.execute(new UpdateLinks(ticketId, links));
+    }
+
+    public String getVersion() throws RTException, HttpException, IOException, InterruptedException {
+        return executor.execute(new GetVersion());
     }
 }

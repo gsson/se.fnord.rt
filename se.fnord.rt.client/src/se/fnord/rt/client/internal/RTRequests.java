@@ -32,4 +32,6 @@ public interface RTRequests {
     String[] awaitMany(final Future<String>... futures) throws HttpException, IOException, RTException, InterruptedException;
 
     String await(Future<String> future) throws HttpException, IOException, RTException, InterruptedException;
+
+    String getVersion() throws RTException, HttpException, IOException;
 }

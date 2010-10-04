@@ -51,6 +51,7 @@ public class RTClient implements RTRequests, RTExecutor {
 
     private Cookie session;
     private String authFailed;
+    private String version;
 
     /* RT/3.8.2 401 Credentials required */
     private static final Pattern HEAD_PATTERN = Pattern.compile("RT/([0-9.]+) ([0-9]+) (.*)");
@@ -241,7 +242,7 @@ public class RTClient implements RTRequests, RTExecutor {
             if (!matcher.matches())
                 throw new RuntimeException(String.format("Invalid RT response header (\"%s\").", head));
 
-            final String version = matcher.group(1);
+            version = matcher.group(1);
             final int rtCode = Integer.parseInt(matcher.group(2));
             final String message = matcher.group(3);
 
@@ -254,5 +255,12 @@ public class RTClient implements RTRequests, RTExecutor {
             return new RTResponse(rtCode, message, version, split[1]);
         }
         throw new RuntimeException("Invalid body");
+    }
+
+    @Override
+    public String getVersion() throws RTException, HttpException, IOException {
+        if (version == null)
+            get(urls.getBaseUrl());
+        return version;
     }
 }

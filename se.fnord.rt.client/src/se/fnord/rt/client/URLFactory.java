@@ -108,6 +108,10 @@ public final class URLFactory {
         return sb.toString();
     }
 
+    public String getBaseUrl() {
+        return appendPath(API_PATH).toString();
+    }
+
     public String getAuthUrl() {
         return appendPath(API_PATH).toString();
     }
