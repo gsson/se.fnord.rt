@@ -7,7 +7,7 @@
          point="org.eclipse.mylyn.tasks.ui.repositories">
       <connectorCore
             class="se.fnord.rt.core.RequestTrackerRepositoryConnector"
-            id="se.fnord.rt.core.repositoryConnector"
+            id="RequestTracker"
             name="%connectorCore.name">
       </connectorCore>
       <connectorUi
