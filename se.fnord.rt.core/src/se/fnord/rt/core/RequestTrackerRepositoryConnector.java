@@ -24,6 +24,7 @@ import java.util.Map.Entry;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.mylyn.tasks.core.AbstractRepositoryConnector;
 import org.eclipse.mylyn.tasks.core.IRepositoryQuery;
 import org.eclipse.mylyn.tasks.core.ITask;
@@ -36,6 +37,7 @@ import org.eclipse.mylyn.tasks.core.data.TaskDataCollector;
 import org.eclipse.mylyn.tasks.core.data.TaskMapper;
 import org.eclipse.mylyn.tasks.core.sync.ISynchronizationSession;
 
+import se.fnord.rt.client.RTQueue;
 import se.fnord.rt.client.URLFactory;
 
 public class RequestTrackerRepositoryConnector extends AbstractRepositoryConnector {
@@ -135,7 +137,6 @@ public class RequestTrackerRepositoryConnector extends AbstractRepositoryConnect
     @Override
     public IStatus performQuery(TaskRepository repository, IRepositoryQuery query, TaskDataCollector collector,
             ISynchronizationSession session, IProgressMonitor monitor) {
-        // TODO Auto-generated method stub
         try {
             monitor.beginTask("", 1);
             taskDataHandler.performQuery(repository, query, collector, monitor);
@@ -149,19 +150,7 @@ public class RequestTrackerRepositoryConnector extends AbstractRepositoryConnect
 
     @Override
     public void updateRepositoryConfiguration(TaskRepository repository, IProgressMonitor monitor) throws CoreException {
-        // TODO: Update when repository/client will hold state.
-        try {
-            monitor.beginTask("", 1);
-            List<String> queues = new ArrayList<String>();
-            for (Entry<String, String> property : repository.getProperties().entrySet()) {
-                if (property.getKey().startsWith(REPOSITORY_PROPERTY_QUEUE_PREFIX)) {
-                    queues.add(property.getValue());
-                }
-            }
-
-        } finally {
-            monitor.done();
-        }
+        RequestTrackerCorePlugin.getDefault().getConfigurationCache().refreshConfiguration(repository, monitor);
     }
 
     @Override

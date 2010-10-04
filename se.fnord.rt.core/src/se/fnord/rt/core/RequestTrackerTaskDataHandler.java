@@ -23,6 +23,7 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.mylyn.tasks.core.IRepositoryQuery;
 import org.eclipse.mylyn.tasks.core.ITaskMapping;
 import org.eclipse.mylyn.tasks.core.RepositoryResponse;
@@ -38,9 +39,11 @@ import org.eclipse.mylyn.tasks.core.data.TaskDataCollector;
 import se.fnord.rt.client.RTAPI;
 import se.fnord.rt.client.RTAuthenticationException;
 import se.fnord.rt.client.RTLinkType;
+import se.fnord.rt.client.RTQueue;
 import se.fnord.rt.client.RTTicket;
 import se.fnord.rt.client.RTTicketAttributes;
 import se.fnord.rt.client.RTTicketCollector;
+import se.fnord.rt.core.internal.RepositoryConfiguration;
 import se.fnord.rt.core.internal.TaskDataBuilder;
 
 public class RequestTrackerTaskDataHandler extends AbstractTaskDataHandler {
@@ -70,8 +73,10 @@ public class RequestTrackerTaskDataHandler extends AbstractTaskDataHandler {
     @Override
     public void getMultiTaskData(TaskRepository repository, Set<String> taskIds, TaskDataCollector collector,
             IProgressMonitor monitor) throws CoreException {
-        monitor.beginTask("Fetching tickets", taskIds.size());
+        monitor.beginTask("Fetching tickets", taskIds.size() + 1);
         try {
+            final RepositoryConfiguration config = RequestTrackerCorePlugin.getDefault().getConfigurationCache().getConfiguration(repository, new SubProgressMonitor(monitor, 1));
+
             final RTAPI client = RequestTrackerCorePlugin.getDefault().getClient(repository);
             final TaskDataBuilder taskDataBuilder = new TaskDataBuilder(repository, getAttributeMapper(repository));
 
@@ -198,7 +203,8 @@ public class RequestTrackerTaskDataHandler extends AbstractTaskDataHandler {
     public void performQuery(TaskRepository repository, IRepositoryQuery query, TaskDataCollector collector,
             IProgressMonitor monitor) throws CoreException {
         try {
-            monitor.beginTask("Performing query", 1);
+            monitor.beginTask("Performing query", 5);
+            final RepositoryConfiguration config = RequestTrackerCorePlugin.getDefault().getConfigurationCache().getConfiguration(repository, new SubProgressMonitor(monitor, 4));
 
             final String queryString = query.getAttribute(QUERY_ID);
             final RTAPI client = RequestTrackerCorePlugin.getDefault().getClient(repository);
@@ -219,4 +225,5 @@ public class RequestTrackerTaskDataHandler extends AbstractTaskDataHandler {
             monitor.done();
         }
     }
+
 }

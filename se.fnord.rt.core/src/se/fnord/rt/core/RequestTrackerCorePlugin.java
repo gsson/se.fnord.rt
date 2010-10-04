@@ -15,6 +15,8 @@
  */
 package se.fnord.rt.core;
 
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.mylyn.commons.net.AuthenticationCredentials;
 import org.eclipse.mylyn.commons.net.AuthenticationType;
@@ -24,6 +26,8 @@ import org.osgi.framework.BundleContext;
 
 import se.fnord.rt.client.RTAPI;
 import se.fnord.rt.client.RTAPIFactory;
+import se.fnord.rt.core.internal.RepositoryConfigurationFetcherImpl;
+import se.fnord.rt.core.internal.RepositoryConfigurationCache;
 
 public class RequestTrackerCorePlugin extends Plugin {
 
@@ -31,7 +35,8 @@ public class RequestTrackerCorePlugin extends Plugin {
 
     private static RequestTrackerCorePlugin plugin;
 
-    private RequestTrackerRepositoryConnector connector;
+    private RequestTrackerRepositoryConnector connector = null;
+    private RepositoryConfigurationCache configurationCache = null;
 
     private TaskRepositoryLocationFactory taskRepositoryLocationFactory;
 
@@ -46,6 +51,8 @@ public class RequestTrackerCorePlugin extends Plugin {
     @Override
     public void stop(BundleContext context) throws Exception {
         plugin = null;
+        configurationCache.close();
+        configurationCache = null;
         super.stop(context);
     }
 
@@ -60,6 +67,13 @@ public class RequestTrackerCorePlugin extends Plugin {
         return connector;
     }
 
+    public synchronized RepositoryConfigurationCache getConfigurationCache() {
+        if (configurationCache == null)
+            configurationCache = new RepositoryConfigurationCache(new RepositoryConfigurationFetcherImpl(), getConfigurationCachePath().toFile());
+
+        return configurationCache;
+    }
+
     public RTAPI getClient(TaskRepository repo) {
         AuthenticationCredentials credentials = repo.getCredentials(AuthenticationType.REPOSITORY);
         return clientFactory.getClient(repo.getRepositoryUrl(), credentials.getUserName(), credentials.getPassword());
@@ -71,6 +85,12 @@ public class RequestTrackerCorePlugin extends Plugin {
 
     public TaskRepositoryLocationFactory getTaskRepositoryLocationFactory() {
         return taskRepositoryLocationFactory;
+    }
+
+    IPath getConfigurationCachePath() {
+        final IPath stateLocation = Platform.getStateLocation(getBundle());
+        final IPath configurationFile = stateLocation.append("repositoryConfigurations");
+        return configurationFile;
     }
 
 }
