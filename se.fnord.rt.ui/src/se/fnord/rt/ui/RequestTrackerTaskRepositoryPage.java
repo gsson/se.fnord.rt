@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.mylyn.commons.net.AuthenticationCredentials;
 import org.eclipse.mylyn.commons.net.AuthenticationType;
 import org.eclipse.mylyn.internal.tasks.core.IRepositoryConstants;
+import org.eclipse.mylyn.tasks.core.RepositoryStatus;
 import org.eclipse.mylyn.tasks.core.TaskRepository;
 import org.eclipse.mylyn.tasks.ui.wizards.AbstractRepositorySettingsPage;
 import org.eclipse.mylyn.tasks.ui.wizards.ITaskRepositoryPage;
@@ -33,7 +34,9 @@ import org.eclipse.swt.widgets.Composite;
 
 import se.fnord.rt.client.RTAPI;
 import se.fnord.rt.client.RTAPIFactory;
+import se.fnord.rt.client.RTAuthenticationException;
 import se.fnord.rt.client.RTException;
+import se.fnord.rt.client.RTQueue;
 import se.fnord.rt.core.RequestTrackerRepositoryConnector;
 
 @SuppressWarnings("restriction")
@@ -99,13 +102,11 @@ public class RequestTrackerTaskRepositoryPage extends AbstractRepositorySettings
                     AuthenticationCredentials credentials = repository.getCredentials(AuthenticationType.REPOSITORY);
                     RTAPI rtClient = new RTAPIFactory().getClient(repository.getRepositoryUrl(), credentials.getUserName(), credentials.getPassword());
                     rtClient.getUser(repository.getUserName());
-                } catch (RTException e) {
-                    if (e.getCode() == 401)
-                        setStatus(new Status(IStatus.ERROR, RequestTrackerUIPlugin.PLUGIN_ID, INVALID_LOGIN));
-                    else
-                        setStatus(new Status(IStatus.ERROR, RequestTrackerUIPlugin.PLUGIN_ID, e.getMessage()));
+
+                } catch (RTAuthenticationException e) {
+                    setStatus(RepositoryStatus.createLoginError(repository.getRepositoryUrl(), RequestTrackerUIPlugin.PLUGIN_ID));
                 } catch (Exception e) {
-                    setStatus(new Status(IStatus.ERROR, RequestTrackerUIPlugin.PLUGIN_ID, e.getMessage()));
+                    setStatus(RepositoryStatus.createStatus(repository, IStatus.ERROR, RequestTrackerUIPlugin.PLUGIN_ID, e.toString()));
                 }
             }
         };
