@@ -23,6 +23,7 @@ import java.util.Map;
 
 public class RTTicket {
     public final int ticketId;
+    public final String queue;
     public final Map<RTTicketAttributes, Object> mappedFields;
     public final Map<String, String> unmappedFields;
     public final List<RTHistory> comments;
@@ -36,6 +37,7 @@ public class RTTicket {
         this.comments = null;
         this.links = null;
         this.ticketId = (Integer) mappedFields.get(RTTicketAttributes.ID);
+        this.queue = (String) mappedFields.get(RTTicketAttributes.QUEUE);
         this.partial = true;
     }
 
@@ -46,6 +48,7 @@ public class RTTicket {
         this.comments = new ArrayList<RTHistory>(comments);
         this.links = new EnumMap<RTLinkType, List<Integer>>(links);
         this.ticketId = (Integer) mappedFields.get(RTTicketAttributes.ID);
+        this.queue = (String) mappedFields.get(RTTicketAttributes.QUEUE);
         this.partial = false;
     }
 
