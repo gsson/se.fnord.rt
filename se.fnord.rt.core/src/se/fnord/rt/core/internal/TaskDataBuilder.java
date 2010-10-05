@@ -25,10 +25,12 @@ public class TaskDataBuilder {
     private final URLFactory urls;
     private final TaskRepository repository;
     private final TaskAttributeMapper mapper;
+    private final RepositoryConfiguration repositoryConfiguration;
 
 
-    public TaskDataBuilder(final TaskRepository repository, final TaskAttributeMapper mapper) {
+    public TaskDataBuilder(final TaskRepository repository, final RepositoryConfiguration repositoryConfiguration, final TaskAttributeMapper mapper) {
         this.repository = repository;
+        this.repositoryConfiguration = repositoryConfiguration;
         this.mapper = mapper;
         try {
             urls = URLFactory.create(repository.getRepositoryUrl());
@@ -36,7 +38,6 @@ public class TaskDataBuilder {
             throw new IllegalArgumentException(e1);
         }
     }
-
 
     public TaskData createTaskData(final RTTicket task) {
         final String taskId = Integer.toString(task.ticketId);
@@ -84,7 +85,6 @@ public class TaskDataBuilder {
         return taskData;
 
     }
-
 
     private static TaskAttribute createAttribute(TaskAttribute parent, String id, String type, String label, String... values) {
         TaskAttribute attribute = parent.createAttribute(id);
