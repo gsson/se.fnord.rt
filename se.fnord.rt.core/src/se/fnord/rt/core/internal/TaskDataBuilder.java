@@ -39,7 +39,7 @@ public class TaskDataBuilder {
 
 
     public TaskData createTaskData(final RTTicket task) {
-        final String taskId = Integer.toString(task.taskId);
+        final String taskId = Integer.toString(task.ticketId);
         final TaskData taskData = new TaskData(mapper, repository.getConnectorKind(), repository.getRepositoryUrl(), taskId);
         final TaskAttribute root = taskData.getRoot();
 
