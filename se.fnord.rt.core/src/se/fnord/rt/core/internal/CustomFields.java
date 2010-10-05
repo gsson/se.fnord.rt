@@ -2,6 +2,7 @@ package se.fnord.rt.core.internal;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,7 +14,7 @@ public class CustomFields implements Fields, Serializable {
     private transient Map<String, CustomField> fieldsByMylynId = null;
 
     public CustomFields(final List<CustomField> fields) {
-        this.fields = new ArrayList<CustomField>(fields);
+        this.fields = Collections.unmodifiableList(new ArrayList<CustomField>(fields));
     }
 
     @Override
@@ -37,6 +38,11 @@ public class CustomFields implements Fields, Serializable {
             fieldsByMylynId.put(field.getMylynId(), field);
             fieldsByRTId.put(field.getRTId(), field);
         }
+    }
+
+    @Override
+    public List<CustomField> getFields() {
+        return fields;
     }
 
 }

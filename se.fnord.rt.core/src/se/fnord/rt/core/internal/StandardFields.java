@@ -27,7 +27,6 @@ public class StandardFields implements Fields, Serializable {
 
     public StandardFields(final String version) {
         this.version = version;
-
     }
 
     public void load() throws FileNotFoundException, IOException, ParserConfigurationException, SAXException {
@@ -41,7 +40,7 @@ public class StandardFields implements Fields, Serializable {
 
         final NodeList nodes = doc.getElementsByTagName("field");
 
-        fields = new ArrayList<StandardField>(nodes.getLength());
+        List<StandardField> newFields = new ArrayList<StandardField>(nodes.getLength());
         fieldsByMylynId = null;
         fieldsByRTId = null;
 
@@ -63,8 +62,9 @@ public class StandardFields implements Fields, Serializable {
             else
                 description = descriptionNodes.item(0).getTextContent().trim();
 
-            fields.add(new StandardField(mylynId, name, label, description, kind, type, readOnly));
+            newFields.add(new StandardField(mylynId, name, label, description, kind, type, readOnly));
         }
+        fields = Collections.unmodifiableList(newFields);
     }
 
     private void buildMaps() {
@@ -74,15 +74,21 @@ public class StandardFields implements Fields, Serializable {
             fieldsByRTId.put(field.getRTId(), field);
             fieldsByMylynId.put(field.getMylynId(), field);
         }
-
     }
 
+    @Override
+    public List<StandardField> getFields() {
+        return fields;
+    }
+
+    @Override
     public StandardField getByRTId(final String name) {
         if (fieldsByRTId == null)
             buildMaps();
         return fieldsByRTId.get(name);
     }
 
+    @Override
     public StandardField getByMylynId(final String name) {
         if (fieldsByMylynId == null)
             buildMaps();
