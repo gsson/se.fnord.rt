@@ -54,7 +54,7 @@ public class RepositoryConfigurationFetcherImpl implements RepositoryConfigurati
         final List<CustomField> fields = new ArrayList<CustomField>(rtQueue.getTicketFields().size());
 
         for (final RTCustomField rtField : rtQueue.getTicketFields())
-            fields.add(new CustomField(rtField.getName(), rtField.getName(), rtField.getDescription()));
+            fields.add(new CustomField(rtField.getName(), rtField.getName(), rtField.getDescription(), "string"));
 
         return new QueueInfo(rtQueue.getId(), rtQueue.getName(), rtQueue.getDescription(), fields);
     }
@@ -80,7 +80,7 @@ public class RepositoryConfigurationFetcherImpl implements RepositoryConfigurati
         try {
             final List<String> queueIds = new ArrayList<String>();
             for (Entry<String, String> property : repository.getProperties().entrySet()) {
-                if (property.getKey().startsWith(RequestTrackerRepositoryConnector.REPOSITORY_PROPERTY_QUEUE_PREFIX)) {
+                if (property.getKey().startsWith(RequestTrackerRepositoryConnector.REPOSITORY_PROPERTY_QUEUE_ID_PREFIX)) {
                     queueIds.add(property.getValue());
                 }
             }

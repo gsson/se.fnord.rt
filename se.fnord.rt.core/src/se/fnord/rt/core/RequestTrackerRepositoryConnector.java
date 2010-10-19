@@ -41,7 +41,7 @@ import se.fnord.rt.client.RTQueue;
 import se.fnord.rt.client.URLFactory;
 
 public class RequestTrackerRepositoryConnector extends AbstractRepositoryConnector {
-    public static final String REPOSITORY_PROPERTY_QUEUE_PREFIX = "rt.queue.";
+    public static final String REPOSITORY_PROPERTY_QUEUE_ID_PREFIX = "rt.queue.id.";
     public static final String REPOSITORY_CONNECTOR_KIND = "RequestTracker";
     public static final String REPOSITORY_TYPE_LABEL = "Request Tracker";
     public static final String REPOSITORY_TYPE_SHORT_LABEL = "RT";

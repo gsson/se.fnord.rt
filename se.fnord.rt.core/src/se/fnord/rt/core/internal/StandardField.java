@@ -11,14 +11,16 @@ public class StandardField implements Field, Serializable {
     private final String type;
     private final boolean readOnly;
     private final String mylynId;
+    private final String translatorName;
 
-    public StandardField(final String mylynId, final String rtId, final String label, final String description, final String kind, final String type, final boolean readOnly) {
+    public StandardField(final String mylynId, final String rtId, final String label, final String description, final String kind, final String type, final String translatorName, final boolean readOnly) {
         this.mylynId = mylynId;
         this.rtId = rtId;
         this.label = label;
         this.description = description;
         this.kind = kind;
         this.type = type;
+        this.translatorName = translatorName;
         this.readOnly = readOnly;
     }
 
@@ -54,6 +56,11 @@ public class StandardField implements Field, Serializable {
 
     public String getMylynId() {
         return mylynId;
+    }
+
+    @Override
+    public String getTranslatorName() {
+        return translatorName;
     }
 
 }

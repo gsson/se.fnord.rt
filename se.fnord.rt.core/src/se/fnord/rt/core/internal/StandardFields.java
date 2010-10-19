@@ -29,6 +29,8 @@ public class StandardFields implements Fields, Serializable {
         this.version = version;
     }
 
+    private static final class Container {};
+
     public void load() throws FileNotFoundException, IOException, ParserConfigurationException, SAXException {
         /* TODO: Yea...do something proper here */
 
@@ -51,18 +53,19 @@ public class StandardFields implements Fields, Serializable {
             final String name = fieldNode.getAttribute("name");
             final String mylynId = fieldNode.getAttribute("mylynId");
             final String type = fieldNode.getAttribute("type");
-            final String kind = fieldNode.getAttribute("kind");
+            final String kind = "task.common.kind." + fieldNode.getAttribute("kind");
             final String label = (fieldNode.hasAttribute("label"))?fieldNode.getAttribute("label"):name;
-            final boolean readOnly = Boolean.parseBoolean(fieldNode.getAttribute("label"));
+            final boolean readOnly = Boolean.parseBoolean(fieldNode.getAttribute("readOnly"));
             final String description;
             final NodeList descriptionNodes = fieldNode.getElementsByTagName("description");
+            final String translator = fieldNode.getAttribute("mapper");
 
             if (descriptionNodes == null || descriptionNodes.getLength() != 1)
                 description = "";
             else
                 description = descriptionNodes.item(0).getTextContent().trim();
 
-            newFields.add(new StandardField(mylynId, name, label, description, kind, type, readOnly));
+            newFields.add(new StandardField(mylynId, name, label, description, kind, type, translator, readOnly));
         }
         fields = Collections.unmodifiableList(newFields);
     }

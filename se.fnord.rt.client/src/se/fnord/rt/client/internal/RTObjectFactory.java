@@ -18,7 +18,6 @@ package se.fnord.rt.client.internal;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -30,7 +29,6 @@ import se.fnord.rt.client.RTHistoryAttributes;
 import se.fnord.rt.client.RTLinkType;
 import se.fnord.rt.client.RTQueue;
 import se.fnord.rt.client.RTTicket;
-import se.fnord.rt.client.RTTicketAttributes;
 import se.fnord.rt.client.RTUser;
 import se.fnord.rt.client.RTUserAttributes;
 import se.fnord.rt.client.internal.attributes.IdParser;
@@ -60,18 +58,7 @@ public final class RTObjectFactory {
         ParseUtils.parseAttributes(data, attributes);
         ParseUtils.filterNotSet(attributes);
 
-        final EnumMap<RTTicketAttributes, Object> fields = new EnumMap<RTTicketAttributes, Object>(RTTicketAttributes.class);
-        final Iterator<Map.Entry<String, String>> i = attributes.entrySet().iterator();
-        while (i.hasNext()) {
-            final Map.Entry<String, String> e = i.next();
-            final RTTicketAttributes attr = RTTicketAttributes.getByName(e.getKey());
-            if (attr != null) {
-                i.remove();
-                fields.put(attr, attr.parse(e.getValue()));
-            }
-        }
-
-        return new RTTicket(fields, attributes);
+        return new RTTicket(attributes);
     }
 
     public static RTTicket createFullTicket(final String data, final String multiPartHistory, final String linksData) {
@@ -80,21 +67,10 @@ public final class RTObjectFactory {
         ParseUtils.parseAttributes(data, attributes);
         ParseUtils.filterNotSet(attributes);
 
-        final EnumMap<RTTicketAttributes, Object> fields = new EnumMap<RTTicketAttributes, Object>(RTTicketAttributes.class);
-        final Iterator<Map.Entry<String, String>> i = attributes.entrySet().iterator();
-        while (i.hasNext()) {
-            final Map.Entry<String, String> e = i.next();
-            final RTTicketAttributes attr = RTTicketAttributes.getByName(e.getKey());
-            if (attr != null) {
-                i.remove();
-                fields.put(attr, attr.parse(e.getValue()));
-            }
-        }
-
         final List<RTHistory> history = createHistory(multiPartHistory);
         final Map<RTLinkType, List<Integer>> links = createLinks(linksData);
 
-        return new RTTicket(fields, attributes, history, links);
+        return new RTTicket(attributes, history, links);
     }
 
     private static Map<RTLinkType, List<Integer>> createLinks(String linksData) {

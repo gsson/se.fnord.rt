@@ -10,4 +10,6 @@ public interface Field {
     String getKind();
     String getType();
     boolean isReadOnly();
+
+    String getTranslatorName();
 }

@@ -11,11 +11,13 @@ public class CustomField implements Field, Serializable {
     private final String label;
     private final String description;
     private final String mylynId;
+    private final String translatorName;
 
-    public CustomField(final String id, final String label, final String description) {
+    public CustomField(final String id, final String label, final String description, final String translatorName) {
         this.rtId = id;
         this.label = label;
         this.description = description;
+        this.translatorName = translatorName;
         this.mylynId = MYLYN_ID_PREFIX + id;
     }
 
@@ -52,6 +54,11 @@ public class CustomField implements Field, Serializable {
     @Override
     public String getMylynId() {
         return mylynId;
+    }
+
+    @Override
+    public String getTranslatorName() {
+        return translatorName;
     }
 
 }

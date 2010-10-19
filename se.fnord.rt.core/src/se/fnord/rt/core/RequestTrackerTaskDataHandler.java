@@ -40,16 +40,43 @@ import se.fnord.rt.client.RTAPI;
 import se.fnord.rt.client.RTAuthenticationException;
 import se.fnord.rt.client.RTLinkType;
 import se.fnord.rt.client.RTTicket;
-import se.fnord.rt.client.RTTicketAttributes;
 import se.fnord.rt.client.RTTicketCollector;
+import se.fnord.rt.core.internal.CustomFields;
+import se.fnord.rt.core.internal.Field;
+import se.fnord.rt.core.internal.FieldTranslator;
+import se.fnord.rt.core.internal.QueueInfo;
 import se.fnord.rt.core.internal.RepositoryConfiguration;
+import se.fnord.rt.core.internal.StandardFields;
 import se.fnord.rt.core.internal.TaskDataBuilder;
 
 public class RequestTrackerTaskDataHandler extends AbstractTaskDataHandler {
     public static final String QUERY_ID = "rt.query";
 
+
     public RequestTrackerTaskDataHandler() {
         super();
+    }
+
+    public static String toRTValue(TaskAttribute attribute, TaskAttributeMapper mapper, FieldTranslator<?> translator) throws CoreException {
+        String type = attribute.getMetaData().getType();
+        if (TaskAttribute.TYPE_INTEGER.equals(type))
+            return translator.textRepresentation(mapper.getIntegerValue(attribute));
+        else if (TaskAttribute.TYPE_DATETIME.equals(type))
+            return translator.textRepresentation(mapper.getDateValue(attribute));
+        else if (TaskAttribute.TYPE_SHORT_TEXT.equals(type) || TaskAttribute.TYPE_LONG_TEXT.equals(type) || TaskAttribute.TYPE_LONG_RICH_TEXT.equals(type) || TaskAttribute.TYPE_SHORT_RICH_TEXT.equals(type))
+            return translator.textRepresentation(mapper.getValue(attribute));
+        else if (TaskAttribute.TYPE_PERSON.equals(type))
+            return translator.textRepresentation(mapper.getValue(attribute));
+        else if (TaskAttribute.TYPE_BOOLEAN.equals(type))
+            return translator.textRepresentation(mapper.getBooleanValue(attribute));
+        else if (TaskAttribute.TYPE_SINGLE_SELECT.equals(type)) {
+            /*
+            for (String o : options)
+                attribute.putOption(o, o);
+            */
+            return translator.textRepresentation(mapper.getValue(attribute));
+        }
+        throw new CoreException(RepositoryStatus.createInternalError(RequestTrackerCorePlugin.PLUGIN_ID, "Can not translate type " + type, null));
     }
 
     private static final class TicketCollector implements RTTicketCollector {
@@ -63,7 +90,7 @@ public class RequestTrackerTaskDataHandler extends AbstractTaskDataHandler {
             this.monitor = monitor;
         }
         @Override
-        public void accept(RTTicket ticket) {
+        public void accept(RTTicket ticket) throws CoreException {
             this.collector.accept(taskDataBuilder.createTaskData(ticket));
             monitor.worked(1);
         }
@@ -110,6 +137,13 @@ public class RequestTrackerTaskDataHandler extends AbstractTaskDataHandler {
         return false;
     }
 
+    private Field getField(final String mylynId, StandardFields sf, CustomFields cf) {
+        Field f = sf.getByMylynId(mylynId);
+        if (f != null)
+            return f;
+        return cf.getByMylynId(mylynId);
+    }
+
     @Override
     public RepositoryResponse postTaskData(TaskRepository repository, TaskData data, Set<TaskAttribute> oldAttributes, IProgressMonitor monitor)
             throws CoreException {
@@ -123,6 +157,13 @@ public class RequestTrackerTaskDataHandler extends AbstractTaskDataHandler {
 
             final TaskAttribute root = data.getRoot();
             final TaskAttributeMapper mapper = data.getAttributeMapper();
+
+            final RepositoryConfiguration repositoryConfiguration = RequestTrackerCorePlugin.getDefault().getConfigurationCache().getConfiguration(repository, new SubProgressMonitor(monitor, 4));
+            final QueueInfo queueInfo = repositoryConfiguration.getQueueInfo(mapper.getValue(root.getAttribute("rt.fields.queue")));
+
+            final StandardFields standardFields = repositoryConfiguration.getStandardFields();
+            final CustomFields customFields = queueInfo.getTicketCustomFields();
+
             String comment = null;
             final Map<String,String> stringAttributes = new HashMap<String, String>();
             final HashMap<String, String> links = new HashMap<String, String>();
@@ -139,20 +180,17 @@ public class RequestTrackerTaskDataHandler extends AbstractTaskDataHandler {
                     continue;
                 }
 
-                if (attributeId.startsWith(RTTicketAttributes.RT_ATTRIBUTE_PREFIX)) {
-                    stringAttributes.put(attributeId.substring(RTTicketAttributes.RT_ATTRIBUTE_PREFIX.length()), attribute.getValue());
+
+                Field f = getField(attributeId, standardFields, customFields);
+                if (f != null) {
+                    stringAttributes.put(f.getRTId(), toRTValue(attribute, mapper, TaskDataBuilder.TRANSLATORS.get(f.getTranslatorName())));
+                    continue;
                 }
                 else if (attributeId.startsWith(RTLinkType.RT_LINK_PREFIX)) {
                     final RTLinkType linkType = RTLinkType.getById(attributeId);
                     if (linkType == null)
                         return null;
                     links.put(linkType.getName(), linkType.dump(linkType.createObject(mapper, attribute)));
-                }
-                else {
-                    final RTTicketAttributes type = RTTicketAttributes.getById(attributeId);
-                    if (type == null)
-                        return null;
-                    stringAttributes.put(type.getName(), type.dump(type.createObject(mapper, attribute)));
                 }
             }
 

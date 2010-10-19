@@ -67,8 +67,19 @@ public class GetTicketsFromIds implements RTOperation<List<RTTicket>> {
             try {
                 final String[] result = holder.await();
                 final RTTicket ticket = RTObjectFactory.createFullTicket(result[0], result[1], result[2]);
-                if (collector != null)
-                    collector.accept(ticket);
+                try {
+                    if (collector != null)
+                        collector.accept(ticket);
+                }
+                catch (IOException e) {
+                    throw e;
+                }
+                catch (InterruptedException e) {
+                    throw e;
+                }
+                catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
                 tickets.add(ticket);
             }
             catch (RTAuthenticationException e) {

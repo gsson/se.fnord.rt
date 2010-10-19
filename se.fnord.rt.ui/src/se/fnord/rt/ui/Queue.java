@@ -13,33 +13,43 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-package se.fnord.rt.client.internal.attributes;
+package se.fnord.rt.ui;
 
-import java.util.ArrayList;
-import java.util.List;
+public class Queue {
+    private Integer id = null;
+    private String name = null;
+    private String description = null;
+    private boolean verified = false;
 
-import org.apache.commons.lang.StringUtils;
-
-public class LinkParser implements RTAttributeParser<List<Integer>> {
-
-    private static int parseLink(final String link) {
-        return Integer.parseInt(link.substring(link.lastIndexOf('/') + 1));
+    public void setName(String name) {
+        this.name = name;
     }
 
-    @Override
-    public List<Integer> parse(String value) {
-        final String[] split = value.split(",");
-        final ArrayList<Integer> links = new ArrayList<Integer>(split.length);
-        for (String link : split)
-            links.add(parseLink(link.trim()));
-        return links;
+    public String getName() {
+        return name;
     }
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public String dump(Object value) {
-        final List<Integer> links = (List<Integer>) value;
-        return StringUtils.join(links, ", ");
+    public void setId(Integer id) {
+        this.id = id;
     }
 
+    public Integer getId() {
+        return id;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setVerified(boolean verified) {
+        this.verified = verified;
+    }
+
+    public boolean isVerified() {
+        return this.verified;
+    }
 }

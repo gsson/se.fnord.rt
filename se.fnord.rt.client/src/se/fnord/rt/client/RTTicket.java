@@ -16,40 +16,65 @@
 package se.fnord.rt.client;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import se.fnord.rt.client.internal.attributes.IdParser;
+
 public class RTTicket {
+    private static final String ID = "id";
+    private static final String QUEUE = "Queue";
+
     public final int ticketId;
     public final String queue;
-    public final Map<RTTicketAttributes, Object> mappedFields;
-    public final Map<String, String> unmappedFields;
+    public final Map<String, String> fields;
+
     public final List<RTHistory> comments;
     public final Map<RTLinkType, List<Integer>> links;
     public final boolean partial;
 
-    public RTTicket(final Map<RTTicketAttributes, Object> mappedFields, final Map<String, String> unmappedFields) {
-        this.unmappedFields = new HashMap<String, String>(unmappedFields);
-        this.mappedFields = new EnumMap<RTTicketAttributes, Object>(RTTicketAttributes.class);
-        this.mappedFields.putAll(mappedFields);
+    public RTTicket(final Map<String, String> fields) {
+        this.fields = Collections.unmodifiableMap(new HashMap<String, String>(fields));
         this.comments = null;
         this.links = null;
-        this.ticketId = (Integer) mappedFields.get(RTTicketAttributes.ID);
-        this.queue = (String) mappedFields.get(RTTicketAttributes.QUEUE);
+        this.ticketId = new IdParser("ticket").parse(fields.get(ID));
+        this.queue = fields.get(QUEUE);
         this.partial = true;
     }
 
-    public RTTicket(final Map<RTTicketAttributes, Object> mappedFields, final Map<String, String> unmappedFields, List<RTHistory> comments, final Map<RTLinkType, List<Integer>> links) {
-        this.unmappedFields = new HashMap<String, String>(unmappedFields);
-        this.mappedFields = new EnumMap<RTTicketAttributes, Object>(RTTicketAttributes.class);
-        this.mappedFields.putAll(mappedFields);
+    public RTTicket(final Map<String, String> fields, List<RTHistory> comments, final Map<RTLinkType, List<Integer>> links) {
+        this.fields = Collections.unmodifiableMap(new HashMap<String, String>(fields));
         this.comments = new ArrayList<RTHistory>(comments);
         this.links = new EnumMap<RTLinkType, List<Integer>>(links);
-        this.ticketId = (Integer) mappedFields.get(RTTicketAttributes.ID);
-        this.queue = (String) mappedFields.get(RTTicketAttributes.QUEUE);
+        this.ticketId = new IdParser("ticket").parse(fields.get(ID));
+        this.queue = fields.get(QUEUE);
         this.partial = false;
     }
 
+    public int getTicketId() {
+        return ticketId;
+    }
+
+    public String getQueue() {
+        return queue;
+    }
+
+    public String getField(final String field) {
+        return fields.get(field);
+    }
+
+    public List<Integer> getLink(final RTLinkType link) {
+        return links.get(link);
+    }
+
+    public boolean isPartial() {
+        return partial;
+    }
+
+    public List<RTHistory> getComments() {
+        return comments;
+    }
 }

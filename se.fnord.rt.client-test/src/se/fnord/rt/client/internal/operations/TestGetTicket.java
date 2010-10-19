@@ -1,27 +1,15 @@
 package se.fnord.rt.client.internal.operations;
 
+import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
 
-import static org.easymock.EasyMock.*;
-
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.MalformedURLException;
-import java.nio.CharBuffer;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import org.apache.commons.httpclient.HttpException;
-import org.apache.commons.httpclient.NameValuePair;
 import org.easymock.EasyMock;
 import org.easymock.IMocksControl;
 import org.junit.Before;
@@ -29,7 +17,6 @@ import org.junit.Test;
 
 import se.fnord.rt.client.RTException;
 import se.fnord.rt.client.RTTicket;
-import se.fnord.rt.client.RTTicketAttributes;
 import se.fnord.rt.client.URLFactory;
 import se.fnord.rt.client.internal.RTRequests;
 import se.fnord.rt.client.testutil.ConstantValueFuture;
@@ -67,8 +54,8 @@ public class TestGetTicket {
             RTTicket ticket = op.execute(urls, req);
             assertEquals(6, ticket.comments.size());
             assertFalse(ticket.partial);
-            assertEquals(14, ticket.mappedFields.get(RTTicketAttributes.ID));
-            assertEquals("gsson", ticket.mappedFields.get(RTTicketAttributes.CREATOR));
+            assertEquals(14, ticket.ticketId);
+            assertEquals("gsson", ticket.fields.get("Creator"));
         }
 
 }
