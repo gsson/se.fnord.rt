@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<fields>
+    <version minVersion="3.8.2" maxVersion="3.8.2">
+        <field name="id" mylynId="task.common.key" type="integer" mapper="identifier" readOnly="true" />
+    
+    	<field name="Queue" mylynId="rt.fields.queue" type="shortText" kind="default" mapper="string" readOnly="true">
+    	   <description>Ticket queue</description>
+    	   <options>
+               <option name="new">New</option>
+               <option name="open">Open</option>
+               <option name="stalled">Stalled</option>
+               <option name="resolved">Resolved</option>
+               <option name="rejected">Rejected</option>
+               <option name="deleted">Deleted</option>
+    	   </options>
+    	</field>
+        <field name="Subject" mylynId="task.common.summary" type="shortText" mapper="string" readOnly="false" />
+        <field name="Status" mylynId="task.common.status" type="singleSelect" kind="default" mapper="string" readOnly="false" />
+    
+        <field name="Priority" mylynId="task.common.priority" type="integer" kind="default" mapper="integer" readOnly="false" />
+        <field name="InitialPriority" label="Initial Priority" mylynId="rt.fields.initialPriority" type="integer" kind="default" mapper="integer" readOnly="false" />
+        <field name="FinalPriority" label="Final Priority" mylynId="rt.fields.finalPriority" type="integer" kind="default" mapper="integer" readOnly="false" />
+    
+        <field name="Owner" mylynId="task.common.user.assigned" type="person" kind="default" label="Assigned to" mapper="string" readOnly="false" />
+        <field name="Creator" mylynId="task.common.user.reporter" type="person" kind="default" label="Created by" mapper="string" readOnly="true" />
+        <field name="Requestors" mylynId="rt.fields.requestors" type="person" label="Requestors" kind="default" mapper="string" readOnly="false" />
+        <field name="Cc" mylynId="task.common.user.cc" type="person" label="CC" kind="default" mapper="string" readOnly="false" />
+        <field name="AdminCc" mylynId="rt.fields.adminCc" type="person" label="CC" kind="default" mapper="string" readOnly="false" />
+    
+        <field name="Created" mylynId="task.common.date.created" type="dateTime" mapper="date" readOnly="true" />
+        <field name="Starts" mylynId="rt.fields.dateStarts" type="dateTime" kind="default" mapper="date" readOnly="false" />
+        <field name="Started" mylynId="rt.fields.dateStarted" type="dateTime" kind="default" mapper="date" readOnly="false" />
+        <field name="Due" mylynId="task.common.date.due" type="dateTime" kind="default" mapper="date" readOnly="false" />
+        <field name="Resolved" mylynId="task.common.date.completed" type="dateTime" kind="default" mapper="date" readOnly="true" />
+        <field name="Told" mylynId="rt.fields.dateTold" type="dateTime" kind="default" mapper="date" readOnly="false" />
+        <field name="LastUpdated" label="Last Updated"  mylynId="task.common.date.modified" type="dateTime" mapper="date" readOnly="true" />
+    
+        <field name="TimeEstimated" label="Time Estimated" mylynId="rt.fields.timeEstimated" type="shortText" kind="default" mapper="string" readOnly="false" />
+        <field name="TimeWorked" label="Time Worked" mylynId="rt.fields.timeWorked" type="shortText" kind="default" mapper="string" readOnly="false" />
+        <field name="TimeLeft" label="Time Worked" mylynId="rt.fields.timeLeft" type="shortText" kind="default" mapper="string" readOnly="false" />
+    </version>
+</fields>

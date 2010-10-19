@@ -68,10 +68,6 @@ public class RepositoryConfigurationFetcherImpl implements RepositoryConfigurati
             throw new CoreException(RepositoryStatus.createInternalError(RequestTrackerCorePlugin.PLUGIN_ID, e.getMessage(), e));
         } catch (IOException e) {
             throw new CoreException(RepositoryStatus.createInternalError(RequestTrackerCorePlugin.PLUGIN_ID, e.getMessage(), e));
-        } catch (ParserConfigurationException e) {
-            throw new CoreException(RepositoryStatus.createInternalError(RequestTrackerCorePlugin.PLUGIN_ID, e.getMessage(), e));
-        } catch (SAXException e) {
-            throw new CoreException(RepositoryStatus.createInternalError(RequestTrackerCorePlugin.PLUGIN_ID, e.getMessage(), e));
         }
     }
 

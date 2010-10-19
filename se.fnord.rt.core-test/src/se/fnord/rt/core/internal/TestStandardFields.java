@@ -1,5 +1,6 @@
 package se.fnord.rt.core.internal;
 
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -19,6 +20,16 @@ public class TestStandardFields {
        assertNotNull(field);
        assertEquals("Queue", field.getLabel());
        assertEquals("Ticket queue", field.getDescription());
-       assertFalse(field.isReadOnly());
+       assertTrue(field.isReadOnly());
    }
+
+   @Test
+   public void testVersionComparator() {
+       assertEquals(0, StandardFields.VERSION_COMPARATOR.compare("3.8.1", "3.8.1"));
+       assertEquals(-1, StandardFields.VERSION_COMPARATOR.compare("3.8.1", "3.8.2"));
+       assertEquals(1, StandardFields.VERSION_COMPARATOR.compare("3.8.2", "3.8.1"));
+       assertEquals(-1, StandardFields.VERSION_COMPARATOR.compare("3.8.1", "3.8.1.1"));
+       assertEquals(1, StandardFields.VERSION_COMPARATOR.compare("3.8.1.1", "3.8.1"));
+   }
+
 }
