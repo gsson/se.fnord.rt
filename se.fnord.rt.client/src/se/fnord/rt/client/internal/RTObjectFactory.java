@@ -122,7 +122,7 @@ public final class RTObjectFactory {
         Matcher matcher = FIELD_PATTERN.matcher(data);
         if (!matcher.matches())
             throw new IllegalArgumentException(String.format("\"%s\" does not match pattern \"\"", data, FIELD_PATTERN.pattern()));
-        return new RTCustomField(matcher.group(1), matcher.group(2), matcher.group(3), matcher.group(4));
+        return new RTCustomField("CF.{" + matcher.group(1) + "}", matcher.group(1), matcher.group(2), matcher.group(3), matcher.group(4));
     }
 
     private static List<RTCustomField> createCustomFields(final String[] fieldDescriptions) {

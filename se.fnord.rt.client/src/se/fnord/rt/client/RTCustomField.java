@@ -15,15 +15,16 @@
  */
 package se.fnord.rt.client;
 
-
 public class RTCustomField {
     private final String name;
     private final String description;
     private final String type;
     private final String validation;
+    private final String label;
 
-    public RTCustomField(final String name, final String description, final String type, final String validation) {
+    public RTCustomField(final String name, String label, final String description, final String type, final String validation) {
         this.name = name;
+        this.label = label;
         this.description = description;
         this.type = type;
         this.validation = validation;
@@ -43,5 +44,9 @@ public class RTCustomField {
 
     public String getValidation() {
         return validation;
+    }
+
+    public String getLabel() {
+        return label;
     }
 }
