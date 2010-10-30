@@ -10,30 +10,13 @@ import javax.xml.bind.annotation.XmlValue;
 public class StandardField implements Field, Serializable {
     private static final long serialVersionUID = 735974018454589190L;
 
-    private static class Description {
-        @XmlValue
-        private final String description;
-
-        public Description(String description) {
-            this.description = description;
-        }
-
-        public Description() {
-            this.description = null;
-        }
-
-        public String getDescription() {
-            return description;
-        }
-    }
-
     @XmlAttribute(name = "name")
     private final String rtId;
     @XmlAttribute
     private final String label;
 
     @XmlElement
-    private final Description description;
+    private final String description;
     @XmlAttribute
     private final String kind;
     @XmlAttribute
@@ -50,7 +33,7 @@ public class StandardField implements Field, Serializable {
         this.mylynId = mylynId;
         this.rtId = rtId;
         this.label = label;
-        this.description = new Description(description);
+        this.description = description;
         this.kind = kind;
         this.type = type;
         this.translatorName = translatorName;
@@ -80,9 +63,7 @@ public class StandardField implements Field, Serializable {
 
     @Override
     public String getDescription() {
-        if (description == null)
-            return null;
-        return description.description;
+        return description;
     }
 
     @Override
