@@ -16,6 +16,8 @@
 package se.fnord.rt.core;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -134,7 +136,11 @@ public class RequestTrackerTaskDataHandler extends AbstractTaskDataHandler {
     @Override
     public boolean initializeTaskData(TaskRepository repository, TaskData data, ITaskMapping initializationData, IProgressMonitor monitor)
             throws CoreException {
-        return false;
+        final RepositoryConfiguration repositoryConfiguration = RequestTrackerCorePlugin.getDefault().getConfigurationCache().getConfiguration(repository, new SubProgressMonitor(monitor, 4));
+        final TaskDataBuilder taskDataBuilder = new TaskDataBuilder(repository, repositoryConfiguration, data.getAttributeMapper());
+        taskDataBuilder.initializeTaskData(data, initializationData, "RT-test");
+
+        return true;
     }
 
     private Field getField(final String mylynId, StandardFields sf, CustomFields cf) {
@@ -144,14 +150,21 @@ public class RequestTrackerTaskDataHandler extends AbstractTaskDataHandler {
         return cf.getByMylynId(mylynId);
     }
 
+    private Collection<TaskAttribute> getSetAttributes(TaskAttribute root) {
+        final Map<String, TaskAttribute> candidates = root.getAttributes();
+        final List<TaskAttribute> attributes = new ArrayList<TaskAttribute>(candidates.size());
+        for (final TaskAttribute candidate : candidates.values()) {
+            if (candidate.getValues().size() != 0)
+                attributes.add(candidate);
+        }
+        return attributes;
+    }
+
+
     @Override
     public RepositoryResponse postTaskData(TaskRepository repository, TaskData data, Set<TaskAttribute> oldAttributes, IProgressMonitor monitor)
             throws CoreException {
         try {
-            if (data.isNew())
-                return null;
-
-            final String taskId = data.getTaskId();
 
             monitor.beginTask("Updating task #"+ data.getTaskId(), 1);
 
@@ -165,18 +178,28 @@ public class RequestTrackerTaskDataHandler extends AbstractTaskDataHandler {
             final CustomFields customFields = queueInfo.getTicketCustomFields();
 
             String comment = null;
+            String description = null;
             final Map<String,String> stringAttributes = new HashMap<String, String>();
             final HashMap<String, String> links = new HashMap<String, String>();
 
-            for (final TaskAttribute oldAttribute : oldAttributes) {
-                final String attributeId = oldAttribute.getId();
+            final Collection<TaskAttribute> attributesToSubmit = data.isNew()?getSetAttributes(data.getRoot()):oldAttributes;
+
+            for (final TaskAttribute attributeToSubmit : attributesToSubmit) {
+                final String attributeId = attributeToSubmit.getId();
                 final TaskAttribute attribute = root.getAttribute(attributeId);
 
                 if (attributeId.startsWith(TaskAttribute.PREFIX_COMMENT))
                     return null;
 
                 if (TaskAttribute.COMMENT_NEW.equals(attributeId)) {
-                    comment = attribute.getValue();
+                    if (!attribute.getValue().isEmpty())
+                        comment = attribute.getValue();
+                    continue;
+                }
+
+                if (TaskAttribute.DESCRIPTION.equals(attributeId)) {
+                    if (!attribute.getValue().isEmpty())
+                        description = attribute.getValue();
                     continue;
                 }
 
@@ -197,12 +220,30 @@ public class RequestTrackerTaskDataHandler extends AbstractTaskDataHandler {
             final RTAPI client = RequestTrackerCorePlugin.getDefault().getClient(repository);
 
             try {
-                if (!stringAttributes.isEmpty())
-                    client.updateTicket(taskId, stringAttributes);
-                if (!links.isEmpty())
-                    client.updateLinks(taskId, links);
-                if (comment != null)
-                    client.addComment(taskId, comment);
+                if (data.isNew()) {
+                    if (description != null)
+                        stringAttributes.put("Text", description);
+                    String taskId = client.createTicket(stringAttributes);
+
+                    if (!links.isEmpty())
+                        client.updateLinks(taskId, links);
+                    if (comment != null)
+                        client.addComment(taskId, comment);
+
+                    return new RepositoryResponse(ResponseKind.TASK_CREATED, taskId);
+                }
+                else {
+                    final String taskId = data.getTaskId();
+
+                    if (!stringAttributes.isEmpty())
+                        client.updateTicket(taskId, stringAttributes);
+                    if (!links.isEmpty())
+                        client.updateLinks(taskId, links);
+                    if (comment != null)
+                        client.addComment(taskId, comment);
+                    return new RepositoryResponse(ResponseKind.TASK_UPDATED, taskId);
+                }
+
             } catch (RTAuthenticationException e) {
                 throw new CoreException(RepositoryStatus.createLoginError(repository.getRepositoryUrl(), RequestTrackerCorePlugin.PLUGIN_ID));
             } catch (IOException e) {
@@ -211,7 +252,6 @@ public class RequestTrackerTaskDataHandler extends AbstractTaskDataHandler {
                 throw new CoreException(RepositoryStatus.createInternalError(RequestTrackerCorePlugin.PLUGIN_ID, e.getMessage(), e));
             }
 
-            return new RepositoryResponse(ResponseKind.TASK_UPDATED, taskId);
         }
         finally {
             monitor.done();

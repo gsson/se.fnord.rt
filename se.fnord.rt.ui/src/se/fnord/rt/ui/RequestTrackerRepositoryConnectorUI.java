@@ -24,6 +24,7 @@ import org.eclipse.mylyn.tasks.core.ITaskMapping;
 import org.eclipse.mylyn.tasks.core.TaskRepository;
 import org.eclipse.mylyn.tasks.ui.AbstractRepositoryConnectorUi;
 import org.eclipse.mylyn.tasks.ui.wizards.ITaskRepositoryPage;
+import org.eclipse.mylyn.tasks.ui.wizards.NewTaskWizard;
 import org.eclipse.mylyn.tasks.ui.wizards.RepositoryQueryWizard;
 
 import se.fnord.rt.core.RequestTrackerRepositoryConnector;
@@ -58,8 +59,7 @@ public class RequestTrackerRepositoryConnectorUI extends AbstractRepositoryConne
 
     @Override
     public IWizard getNewTaskWizard(TaskRepository taskRepository, ITaskMapping selection) {
-        // TODO Auto-generated method stub
-        return null;
+        return new NewTaskWizard(taskRepository, selection);
     }
 
     @Override

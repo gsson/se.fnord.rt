@@ -172,4 +172,8 @@ public final class URLFactory {
         return appendPath(API_PATH.append("queue").append(queueId).append("ticketcustomfields"), "format", "l").toString();
     }
 
+    public String getAPITicketNewUrl() {
+        return appendPath(API_PATH.append("ticket").append("new")).toString();
+    }
+
 }

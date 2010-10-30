@@ -8,6 +8,7 @@ import org.apache.commons.httpclient.HttpException;
 
 import se.fnord.rt.client.internal.RTExecutor;
 import se.fnord.rt.client.internal.operations.AddComment;
+import se.fnord.rt.client.internal.operations.CreateTicket;
 import se.fnord.rt.client.internal.operations.GetQueue;
 import se.fnord.rt.client.internal.operations.GetTicket;
 import se.fnord.rt.client.internal.operations.GetTicketsFromIds;
@@ -50,6 +51,10 @@ public class RTAPI {
 
     public void updateTicket(final String ticketId, final Map<String, String> changed) throws HttpException, IOException, RTException, InterruptedException {
         executor.execute(new UpdateTicket(ticketId, changed));
+    }
+
+    public String createTicket(final Map<String, String> attributes) throws HttpException, IOException, RTException, InterruptedException {
+        return executor.execute(new CreateTicket(attributes));
     }
 
     public void addComment(final String ticketId, final String comment) throws HttpException, IOException, RTException, InterruptedException {

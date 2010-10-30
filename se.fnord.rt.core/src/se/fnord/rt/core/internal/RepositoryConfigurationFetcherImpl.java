@@ -54,7 +54,7 @@ public class RepositoryConfigurationFetcherImpl implements RepositoryConfigurati
         final List<CustomField> fields = new ArrayList<CustomField>(rtQueue.getTicketFields().size());
 
         for (final RTCustomField rtField : rtQueue.getTicketFields())
-            fields.add(new CustomField(rtField.getName(), rtField.getName(), rtField.getDescription(), "string"));
+            fields.add(new CustomField(rtField.getName(), rtField.getLabel(), rtField.getDescription(), "string"));
 
         return new QueueInfo(rtQueue.getId(), rtQueue.getName(), rtQueue.getDescription(), fields);
     }

@@ -2,6 +2,7 @@ package se.fnord.rt.core.internal;
 
 import java.net.MalformedURLException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -9,6 +10,7 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.mylyn.tasks.core.IRepositoryPerson;
+import org.eclipse.mylyn.tasks.core.ITaskMapping;
 import org.eclipse.mylyn.tasks.core.RepositoryStatus;
 import org.eclipse.mylyn.tasks.core.TaskRepository;
 import org.eclipse.mylyn.tasks.core.data.TaskAttribute;
@@ -53,15 +55,16 @@ public class TaskDataBuilder {
         }
     }
 
-    private static FieldTranslator<?> getTranslator(final Field field) {
-        return TRANSLATORS.get(field.getTranslatorName());
+    @SuppressWarnings("unchecked")
+    private static <T> FieldTranslator<T> getTranslator(final Field field) {
+        return (FieldTranslator<T>) TRANSLATORS.get(field.getTranslatorName());
     }
 
     private static <T> T translate(final Field field, final String value, Class<T> dstType) throws CoreException {
         try {
             if (value == null)
                 return null;
-            final FieldTranslator<T> t = (FieldTranslator<T>) getTranslator(field);
+            final FieldTranslator<T> t = getTranslator(field);
             if (t == null)
                 throw new CoreException(RepositoryStatus.createInternalError(RequestTrackerCorePlugin.PLUGIN_ID, String.format("No translator for field %s/translator %s found", field.getLabel(), field.getTranslatorName()), null));
             return dstType.cast(t.objectRepresentation(value));
@@ -72,13 +75,22 @@ public class TaskDataBuilder {
 
     }
 
-    private TaskAttribute createMappedAttribute(TaskAttribute parent, Field field, String values) throws CoreException {
+    private TaskAttribute getOrCreateAttribute(TaskAttribute parent, Field field) {
+        final TaskAttribute existingAttribute = parent.getAttribute(field.getMylynId());
+        if (existingAttribute != null)
+            return existingAttribute;
+        return parent.createAttribute(field.getMylynId());
+    }
+
+    private TaskAttribute setMappedAttribute(TaskAttribute parent, Field field, String values) throws CoreException {
         final String type = field.getType();
-        TaskAttribute attribute = parent.createAttribute(field.getMylynId());
-        TaskAttributeMetaData meta = attribute.getMetaData();
+        final TaskAttribute attribute = getOrCreateAttribute(parent, field);
+        final TaskAttributeMetaData meta = attribute.getMetaData();
+
         meta.setType(type);
         meta.setLabel(field.getLabel());
         meta.setReadOnly(field.isReadOnly());
+
         if (field.getKind() != null)
             meta.setKind(field.getKind());
         if (field.getOptions() != null)
@@ -110,7 +122,6 @@ public class TaskDataBuilder {
         return attribute;
     }
 
-
     public TaskData createTaskData(final RTTicket ticket) throws CoreException {
         final String taskId = Integer.toString(ticket.ticketId);
         final TaskData taskData = new TaskData(mapper, repository.getConnectorKind(), repository.getRepositoryUrl(), taskId);
@@ -120,11 +131,11 @@ public class TaskDataBuilder {
         CustomFields customFields = repositoryConfiguration.getQueueInfo(ticket.queue).getTicketCustomFields();
 
         for (Field f : standardFields.getFields()) {
-            createMappedAttribute(root, f, ticket.fields.get(f.getRTId()));
+            setMappedAttribute(root, f, ticket.fields.get(f.getRTId()));
         }
 
         for (Field f : customFields.getFields()) {
-            createMappedAttribute(root, f, ticket.fields.get(f.getRTId()));
+            setMappedAttribute(root, f, ticket.fields.get(f.getRTId()));
         }
 
         if (ticket.links != null) {
@@ -160,6 +171,32 @@ public class TaskDataBuilder {
         return taskData;
     }
 
+
+    public void initializeTaskData(final TaskData taskData, ITaskMapping initializationData, final String queue) throws CoreException {
+        final TaskAttribute root = taskData.getRoot();
+
+        StandardFields standardFields = repositoryConfiguration.getStandardFields();
+        CustomFields customFields = repositoryConfiguration.getQueueInfo(queue).getTicketCustomFields();
+
+        for (Field f : standardFields.getFields()) {
+            setMappedAttribute(root, f, null);
+        }
+
+        setMappedAttribute(root, standardFields.getByMylynId("rt.fields.queue"), queue);
+        setMappedAttribute(root, standardFields.getByMylynId("task.common.status"), "new");
+        setMappedAttribute(root, standardFields.getByMylynId("task.common.user.reporter"), repository.getUserName());
+        createAttribute(root, TaskAttribute.DESCRIPTION, TaskAttribute.TYPE_LONG_RICH_TEXT, "Description");
+
+        for (Field f : customFields.getFields()) {
+            setMappedAttribute(root, f, null);
+        }
+
+        for (RTLinkType t : RTLinkType.values()) {
+            t.createAttribute(mapper, root, Collections.<Integer>emptyList()).getMetaData().setReadOnly(true);
+        }
+
+        createAttribute(root, TaskAttribute.COMMENT_NEW, TaskAttribute.TYPE_LONG_RICH_TEXT, "New Comment", "");
+    }
 
     private static TaskAttribute createAttribute(TaskAttribute parent, String id, String type, String label, String... values) {
         TaskAttribute attribute = parent.createAttribute(id);

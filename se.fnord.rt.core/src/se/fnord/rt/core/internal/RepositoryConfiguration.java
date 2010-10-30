@@ -31,6 +31,8 @@ public class RepositoryConfiguration implements Serializable {
     }
 
     public QueueInfo getQueueInfo(final String queue) {
+        if (!queueInfoByName.containsKey(queue))
+            throw new RuntimeException("No such queue configured: " + queue);
         return queueInfoByName.get(queue);
     }
 
