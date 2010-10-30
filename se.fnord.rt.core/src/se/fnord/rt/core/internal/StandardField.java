@@ -11,12 +11,12 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlValue;
 
-import se.fnord.rt.core.internal.extfields.Version;
-
 public class StandardField implements Field, Serializable {
     private static final long serialVersionUID = 735974018454589190L;
 
-    public static final class OptionImpl implements Option {
+    public static final class OptionImpl implements Option, Serializable {
+        private static final long serialVersionUID = 3737624977306657542L;
+
         @XmlAttribute
         private final String name;
         @XmlValue
