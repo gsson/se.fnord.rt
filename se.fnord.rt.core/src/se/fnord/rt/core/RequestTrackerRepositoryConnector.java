@@ -16,15 +16,11 @@
 package se.fnord.rt.core;
 
 import java.net.MalformedURLException;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
-import java.util.Map.Entry;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.mylyn.tasks.core.AbstractRepositoryConnector;
 import org.eclipse.mylyn.tasks.core.IRepositoryQuery;
 import org.eclipse.mylyn.tasks.core.ITask;
@@ -37,7 +33,6 @@ import org.eclipse.mylyn.tasks.core.data.TaskDataCollector;
 import org.eclipse.mylyn.tasks.core.data.TaskMapper;
 import org.eclipse.mylyn.tasks.core.sync.ISynchronizationSession;
 
-import se.fnord.rt.client.RTQueue;
 import se.fnord.rt.client.URLFactory;
 
 public class RequestTrackerRepositoryConnector extends AbstractRepositoryConnector {
