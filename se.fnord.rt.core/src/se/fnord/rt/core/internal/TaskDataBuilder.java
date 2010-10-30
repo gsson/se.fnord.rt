@@ -81,15 +81,20 @@ public class TaskDataBuilder {
         meta.setReadOnly(field.isReadOnly());
         if (field.getKind() != null)
             meta.setKind(field.getKind());
-        if (values == null)
+        if (field.getOptions() != null)
+            for (Option o : field.getOptions())
+                attribute.putOption(o.getName(), o.getLabel());
+        if (values == null) {
             attribute.clearValues();
+        }
         else {
             if (TaskAttribute.TYPE_INTEGER.equals(type))
                 mapper.setIntegerValue(attribute, translate(field, values, Integer.class));
             else if (TaskAttribute.TYPE_DATETIME.equals(type))
                 mapper.setDateValue(attribute, translate(field, values, Date.class));
-            else if (TaskAttribute.TYPE_SHORT_TEXT.equals(type) || TaskAttribute.TYPE_LONG_TEXT.equals(type) || TaskAttribute.TYPE_LONG_RICH_TEXT.equals(type) || TaskAttribute.TYPE_SHORT_RICH_TEXT.equals(type))
+            else if (TaskAttribute.TYPE_SHORT_TEXT.equals(type) || TaskAttribute.TYPE_LONG_TEXT.equals(type) || TaskAttribute.TYPE_LONG_RICH_TEXT.equals(type) || TaskAttribute.TYPE_SHORT_RICH_TEXT.equals(type)) {
                 mapper.setValue(attribute, translate(field, values, String.class));
+            }
             else if (TaskAttribute.TYPE_PERSON.equals(type))
                 mapper.setValue(attribute, translate(field, values, String.class));
             else if (TaskAttribute.TYPE_BOOLEAN.equals(type))

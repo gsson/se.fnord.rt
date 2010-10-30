@@ -1,5 +1,8 @@
 package se.fnord.rt.core.internal;
 
+import java.util.List;
+
+
 public interface Field {
     String getMylynId();
 
@@ -12,4 +15,6 @@ public interface Field {
     boolean isReadOnly();
 
     String getTranslatorName();
+
+    List<Option> getOptions();
 }

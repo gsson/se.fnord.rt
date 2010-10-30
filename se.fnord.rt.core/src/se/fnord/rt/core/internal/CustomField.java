@@ -1,6 +1,7 @@
 package se.fnord.rt.core.internal;
 
 import java.io.Serializable;
+import java.util.List;
 
 import org.eclipse.mylyn.tasks.core.data.TaskAttribute;
 
@@ -59,6 +60,11 @@ public class CustomField implements Field, Serializable {
     @Override
     public String getTranslatorName() {
         return translatorName;
+    }
+
+    @Override
+    public List<Option> getOptions() {
+        return null;
     }
 
 }

@@ -1,14 +1,52 @@
 package se.fnord.rt.core.internal;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlValue;
+
+import se.fnord.rt.core.internal.extfields.Version;
 
 public class StandardField implements Field, Serializable {
     private static final long serialVersionUID = 735974018454589190L;
+
+    public static final class OptionImpl implements Option {
+        @XmlAttribute
+        private final String name;
+        @XmlValue
+        private final String label;
+
+        public OptionImpl() {
+            name = null;
+            label = null;
+        }
+        public OptionImpl(final String name, final String title) {
+            this.name = name;
+            this.label = title;
+        }
+
+        /* (non-Javadoc)
+         * @see se.fnord.rt.core.internal.Option#getTitle()
+         */
+        @Override
+        public String getLabel() {
+            return label;
+        }
+
+        /* (non-Javadoc)
+         * @see se.fnord.rt.core.internal.Option#getName()
+         */
+        @Override
+        public String getName() {
+            return name;
+        }
+    }
 
     @XmlAttribute(name = "name")
     private final String rtId;
@@ -17,6 +55,11 @@ public class StandardField implements Field, Serializable {
 
     @XmlElement
     private final String description;
+
+    @XmlElementWrapper(name="options")
+    @XmlElements(@XmlElement(name="option", type=OptionImpl.class))
+    private final List<Option> options;
+
     @XmlAttribute
     private final String kind;
     @XmlAttribute
@@ -29,7 +72,7 @@ public class StandardField implements Field, Serializable {
     private final String translatorName;
 
     public StandardField(final String mylynId, final String rtId, final String label, final String description, final String kind,
-            final String type, final String translatorName, final boolean readOnly) {
+            final String type, final String translatorName, final boolean readOnly, final List<Option> options) {
         this.mylynId = mylynId;
         this.rtId = rtId;
         this.label = label;
@@ -38,6 +81,7 @@ public class StandardField implements Field, Serializable {
         this.type = type;
         this.translatorName = translatorName;
         this.readOnly = readOnly;
+        this.options = Collections.unmodifiableList(new ArrayList<Option>(options));
     }
 
     public StandardField() {
@@ -49,6 +93,7 @@ public class StandardField implements Field, Serializable {
         this.type = null;
         this.translatorName = null;
         this.readOnly = true;
+        this.options = null;
     }
 
     @Override
@@ -88,6 +133,10 @@ public class StandardField implements Field, Serializable {
     @Override
     public String getTranslatorName() {
         return translatorName;
+    }
+
+    public List<Option> getOptions() {
+        return options;
     }
 
 }
