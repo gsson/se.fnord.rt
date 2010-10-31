@@ -77,7 +77,10 @@ public class StandardField implements Field, Serializable {
         this.rtId = rtId;
         this.label = label;
         this.description = description;
-        this.kind = kind;
+        if (kind != null)
+            this.kind = kind.substring(kind.lastIndexOf('.') + 1);
+        else
+            this.kind = null;
         this.type = type;
         this.translatorName = translatorName;
         this.readOnly = readOnly;
@@ -113,7 +116,10 @@ public class StandardField implements Field, Serializable {
 
     @Override
     public String getKind() {
-        return "task.common.kind." + kind;
+        if (kind == null)
+            return null;
+        else
+            return "task.common.kind." + kind;
     }
 
     @Override

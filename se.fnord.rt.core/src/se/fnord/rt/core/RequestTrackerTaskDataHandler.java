@@ -138,7 +138,8 @@ public class RequestTrackerTaskDataHandler extends AbstractTaskDataHandler {
             throws CoreException {
         final RepositoryConfiguration repositoryConfiguration = RequestTrackerCorePlugin.getDefault().getConfigurationCache().getConfiguration(repository, new SubProgressMonitor(monitor, 4));
         final TaskDataBuilder taskDataBuilder = new TaskDataBuilder(repository, repositoryConfiguration, data.getAttributeMapper());
-        taskDataBuilder.initializeTaskData(data, initializationData, "RT-test");
+
+        taskDataBuilder.initializeTaskData(data, initializationData);
 
         return true;
     }

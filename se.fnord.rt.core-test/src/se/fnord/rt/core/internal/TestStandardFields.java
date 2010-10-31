@@ -1,10 +1,11 @@
 package se.fnord.rt.core.internal;
 
-import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
+
+import java.util.Collections;
 
 import org.junit.Test;
 
@@ -12,7 +13,7 @@ public class TestStandardFields {
 
    @Test
    public void testLoad() throws Exception {
-       StandardFields fields = new StandardFields("3.8.2");
+       StandardFields fields = new StandardFields("3.8.2", Collections.<QueueInfo>emptySet());
        fields.load();
        StandardField field = fields.getByMylynId("rt.fields.queue");
        StandardField field2 = fields.getByRTId("Queue");
@@ -20,7 +21,7 @@ public class TestStandardFields {
        assertNotNull(field);
        assertEquals("Queue", field.getLabel());
        assertEquals("Ticket queue", field.getDescription());
-       assertTrue(field.isReadOnly());
+       assertFalse(field.isReadOnly());
    }
 
    @Test

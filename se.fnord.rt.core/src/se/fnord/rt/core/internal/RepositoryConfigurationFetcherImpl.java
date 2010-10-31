@@ -3,6 +3,7 @@ package se.fnord.rt.core.internal;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -59,9 +60,9 @@ public class RepositoryConfigurationFetcherImpl implements RepositoryConfigurati
         return new QueueInfo(rtQueue.getId(), rtQueue.getName(), rtQueue.getDescription(), fields);
     }
 
-    private StandardFields getStandardFields(final String version) throws CoreException {
+    private StandardFields getStandardFields(final String version, Collection<QueueInfo> queueInfo) throws CoreException {
         try {
-            final StandardFields standardFields = new StandardFields(version);
+            final StandardFields standardFields = new StandardFields(version, queueInfo);
             standardFields.load();
             return standardFields;
         } catch (FileNotFoundException e) {
@@ -89,7 +90,7 @@ public class RepositoryConfigurationFetcherImpl implements RepositoryConfigurati
                 monitor.worked(1);
             }
 
-            final StandardFields standardFields = getStandardFields(getVersion(repository));
+            final StandardFields standardFields = getStandardFields(getVersion(repository), queues);
             monitor.worked(1);
             return new RepositoryConfiguration(repository.getRepositoryUrl(), repository.getUserName(), queues, standardFields);
         }

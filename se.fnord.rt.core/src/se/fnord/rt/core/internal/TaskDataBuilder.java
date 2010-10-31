@@ -172,8 +172,16 @@ public class TaskDataBuilder {
     }
 
 
-    public void initializeTaskData(final TaskData taskData, ITaskMapping initializationData, final String queue) throws CoreException {
+    public void initializeTaskData(final TaskData taskData, ITaskMapping initializationData) throws CoreException {
         final TaskAttribute root = taskData.getRoot();
+        final Field queueField = repositoryConfiguration.getStandardFields().getByMylynId("rt.fields.queue");
+        if (queueField == null)
+            throw new RuntimeException("Queue field not configured");
+        final List<Option> queues = queueField.getOptions();
+        if (queues == null || queues.size() == 0)
+            throw new RuntimeException("No queues configured");
+
+        String queue = queues.get(0).getName();
 
         StandardFields standardFields = repositoryConfiguration.getStandardFields();
         CustomFields customFields = repositoryConfiguration.getQueueInfo(queue).getTicketCustomFields();

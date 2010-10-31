@@ -3,7 +3,7 @@
     <version minVersion="3.8.2" maxVersion="3.8.2">
         <field name="id" mylynId="task.common.key" type="integer" mapper="identifier" readOnly="true" />
     
-    	<field name="Queue" mylynId="rt.fields.queue" type="shortText" kind="default" mapper="string" readOnly="true">
+    	<field name="Queue" mylynId="rt.fields.queue" type="singleSelect" kind="default" mapper="string" readOnly="false">
     	   <description>Ticket queue</description>
     	</field>
         <field name="Subject" mylynId="task.common.summary" type="shortText" mapper="string" readOnly="false" />

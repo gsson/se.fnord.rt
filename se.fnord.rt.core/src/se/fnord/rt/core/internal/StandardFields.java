@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -16,6 +17,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import se.fnord.rt.core.internal.StandardField.OptionImpl;
 import se.fnord.rt.core.internal.extfields.Version;
 
 @XmlRootElement(name="fields")
@@ -53,8 +55,13 @@ public class StandardFields implements Fields, Serializable {
         }
     };
 
-    public StandardFields(final String version) {
+    private List<Option> queues;
+
+    public StandardFields(final String version, final Collection<QueueInfo> queueInfo) {
         this.version = version;
+        this.queues = new ArrayList<Option>();
+        for (QueueInfo info : queueInfo)
+            this.queues.add(new OptionImpl(info.getName(), info.getName()));
     }
 
     public void load() throws FileNotFoundException, IOException {
@@ -71,7 +78,15 @@ public class StandardFields implements Fields, Serializable {
 
             for (Version v: f.versions) {
                 if ((v.minVersion == null || VERSION_COMPARATOR.compare(v.minVersion, version) <= 0) && (v.maxVersion == null || VERSION_COMPARATOR.compare(version, v.maxVersion) <= 0)) {
-                    final ArrayList<StandardField> newFields = new ArrayList<StandardField>(v.fields);
+                    final ArrayList<StandardField> newFields = new ArrayList<StandardField>(v.fields.size());
+
+                    /* Replace queue field with one populated with the configured queues as options */
+                    for (StandardField field : v.fields) {
+                        if ("rt.fields.queue".equals(field.getMylynId()))
+                            newFields.add(new StandardField(field.getMylynId(), field.getRTId(), field.getLabel(), field.getDescription(), field.getKind(), field.getType(), field.getTranslatorName(), field.isReadOnly(), queues));
+                        else
+                            newFields.add(field);
+                    }
                     this.fields = Collections.unmodifiableList(newFields);
                     return;
                 }
