@@ -26,8 +26,8 @@ import org.osgi.framework.BundleContext;
 
 import se.fnord.rt.client.RTAPI;
 import se.fnord.rt.client.RTAPIFactory;
-import se.fnord.rt.core.internal.RepositoryConfigurationFetcherImpl;
 import se.fnord.rt.core.internal.RepositoryConfigurationCache;
+import se.fnord.rt.core.internal.RepositoryConfigurationFetcherImpl;
 
 public class RequestTrackerCorePlugin extends Plugin {
 
